@@ -32,7 +32,6 @@ D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.exe
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.pdb
 D:\Work\SHARd\CCsearch\bin\Debug\CCsearch.exe
 D:\Work\SHARd\CCsearch\bin\Debug\CCsearch.pdb
-D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache
 D:\Work\SHARd\CCsearch\obj\Debug\SearchWindow.baml
 D:\Work\SHARd\CCsearch\obj\Debug\SearchWindow.g.cs
 D:\Work\SHARd\CCsearch\obj\Debug\App.g.cs
@@ -44,3 +43,4 @@ D:\Work\SHARd\CCsearch\bin\Debug\WPFToolkit.dll
 D:\Work\SHARd\CCsearch\bin\Debug\System.Windows.Controls.Input.Toolkit.pdb
 D:\Work\SHARd\CCsearch\bin\Debug\WPFToolkit.pdb
 D:\Work\SHARd\CCsearch\bin\Debug\System.Windows.Controls.Input.Toolkit.dll
+D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache

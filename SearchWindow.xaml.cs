@@ -7,6 +7,7 @@ using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +37,8 @@ namespace CCsearch
         ObservableCollection<FarmClass> farms = new ObservableCollection<FarmClass>();
         ObservableCollection<CityClass> cities = new ObservableCollection<CityClass>();
         ObservableCollection<ComplexClass> complexies = new ObservableCollection<ComplexClass>();
+        ObservableCollection<MPNClass> sinonims = new ObservableCollection<MPNClass>();
+        ObservableCollection<MPNClass> analogs = new ObservableCollection<MPNClass>();
         #endregion
 
         public MainWindow()
@@ -67,7 +70,7 @@ namespace CCsearch
             DateTime EndTime = DateTime.Now;
             TimeSpan TimeInterval = EndTime.Subtract(StartTime);
             Debug.WriteLine(String.Format("Время предзагрузки данных - {0}", TimeInterval.ToString()));
-            DebugText.Text += String.Format("Время предзагрузки данных - {0}", TimeInterval.ToString());
+            DebugText.Text += String.Format("\r\nВремя предзагрузки данных - {0}", TimeInterval.ToString());
         }
 
         private void SearchWindow_Loaded(object sender, RoutedEventArgs e)
@@ -315,13 +318,75 @@ namespace CCsearch
         }
         #endregion
 
-        
+        #region list events
+        private void MPNList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MPNClass SelItem = (MPNClass)MPNList.SelectedItem;
+            int MpnId = SelItem.GetID();
+            int InterId = SelItem.GetInterID();
+            int FarmId = SelItem.GetFarmID();
+            string sql_sinonim = String.Format("SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id  WHERE mpn.international_name_id = {0} ORDER BY mpn.medical_product_name_name ASC", InterId);
+            string sql_farm_analog = String.Format("SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name  FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.pharmacological_group_id = {0} ORDER BY mpn.medical_product_name_name ASC", FarmId);
+            //Sinonims
+            SqlCommand sc = new SqlCommand(sql_sinonim, ch_d_1_dbc);
+            ch_d_1_dbc.Open();
+            SqlDataReader data = sc.ExecuteReader();
 
-        
+            try
+            {
+                sinonims.Clear();
+                while (data.Read())
+                {
+                    int id = Convert.ToInt32(data["id"].ToString());
+                    string name = data["name"].ToString();
+                    string interName = data["inter_name"].ToString();
+                    int interId = Convert.ToInt32(data["inter_id"].ToString());
+                    int farmId = Convert.ToInt32(data["farm_id"].ToString());
+                    string farmName = data["farm_name"].ToString();
+                    sinonims.Add(new MPNClass(id, name, interId, interName, farmId, farmName));
+                }
+            }
+            finally
+            {
+                Synonim.ItemsSource = sinonims;
+                ch_d_1_dbc.Close();
+                data.Close();
+            }
+            //Analogs
+            SqlCommand sc_a = new SqlCommand(sql_farm_analog, ch_d_1_dbc);
+            ch_d_1_dbc.Open();
+            SqlDataReader data_a = sc_a.ExecuteReader();
 
-        
+            try
+            {
+                analogs.Clear();
+                while (data_a.Read())
+                {
+                    int id = Convert.ToInt32(data_a["id"].ToString());
+                    string name = data_a["name"].ToString();
+                    string interName = data_a["inter_name"].ToString();
+                    int interId = Convert.ToInt32(data_a["inter_id"].ToString());
+                    int farmId = Convert.ToInt32(data_a["farm_id"].ToString());
+                    string farmName = data_a["farm_name"].ToString();
+                    analogs.Add(new MPNClass(id, name, interId, interName, farmId, farmName));
+                }
+            }
+            finally
+            {
+                Analogs.ItemsSource = analogs;
+                ch_d_1_dbc.Close();
+                data_a.Close();
+            }
+            
+        }
 
-        
+        #endregion
+
+
+
+
+
+
     }
 
     
