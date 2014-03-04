@@ -178,7 +178,7 @@
                 </Label>
             </Border>
         </Grid>
-        <TextBlock x:Name="DebugText" Margin="10,30,10,0" Grid.Column="2" TextWrapping="Wrap" Background="White" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False" FontFamily="Times New Roman" FontSize="11" Grid.ColumnSpan="1" Grid.RowSpan="2" Padding="3" />
+        <TextBox x:Name="DebugText" Margin="10,30,10,0" Grid.Column="2" TextWrapping="Wrap" Background="White" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False" FontFamily="Times New Roman" FontSize="11" Grid.ColumnSpan="1" Grid.RowSpan="2" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.IsSharedSizeScope="True" MaxHeight="150" />
         <TabControl x:Name="MainTabs" Margin="10" Grid.Row="2" Width="Auto" Grid.ColumnSpan="3" SelectedIndex="0">
             <TabItem Header="Наименования Препаратов" Style="{StaticResource TabsHead}">
                 <Grid x:Name="TableGrid" Margin="10">
@@ -189,7 +189,7 @@
                     </Grid.ColumnDefinitions>
                     <ListBox x:Name="MPNList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}" SelectionChanged="MPNList_SelectionChanged" />
                     <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" x:Name="BorderMPN">
-                        <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" Content="Торговое Наименование" />
+                        <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="9,0,11,0" Width="Auto" Content="Торговое Наименование" />
                     </Border>
                     <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Visibility="Hidden" x:Name="BorderInter">
                         <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" Content="Международное Наименование"  />
@@ -198,9 +198,13 @@
                         <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" Content="Фармакологическая группа"   />
                     </Border>
                     <ListBox x:Name="Synonim" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}" />
-                    <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="1" />
+                    <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="1" >
+                        <Label Content="Синоним" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
+                    </Border>
                     <ListBox x:Name="Analogs" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="2" ScrollViewer.VerticalScrollBarVisibility="Visible"  ItemContainerStyle="{StaticResource LBIStyle}" />
-                    <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="2" />
+                    <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="2" >
+                        <Label Content="Фармакологический аналог" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
+                    </Border>
                     <ListBox x:Name="InterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}"  Visibility="Hidden" />
                     <ListBox x:Name="FarmList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}" Visibility="Hidden" />
                 </Grid>

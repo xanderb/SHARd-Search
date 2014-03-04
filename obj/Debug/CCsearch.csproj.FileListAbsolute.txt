@@ -43,4 +43,3 @@ D:\Work\SHARd\CCsearch\bin\Debug\WPFToolkit.dll
 D:\Work\SHARd\CCsearch\bin\Debug\System.Windows.Controls.Input.Toolkit.pdb
 D:\Work\SHARd\CCsearch\bin\Debug\WPFToolkit.pdb
 D:\Work\SHARd\CCsearch\bin\Debug\System.Windows.Controls.Input.Toolkit.dll
-D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache

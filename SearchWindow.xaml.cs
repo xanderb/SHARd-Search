@@ -27,8 +27,8 @@ namespace CCsearch
     /// </summary>
     public partial class MainWindow : Window
     {
-        SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
-        SqlConnection ch_php_dbc = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
+        /*SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
+        SqlConnection ch_php_dbc = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);*/
         TextWriterTraceListener DListener = new TextWriterTraceListener(@"d:\work\LOGS\debugCCSearch.txt");
 
         #region lists
@@ -50,7 +50,8 @@ namespace CCsearch
         {
             if (Properties.Settings.Default.IsDebug)
             {
-                DebugMode();
+                //DebugMode();
+                PreloadSearch();
             }
             else
             {
@@ -58,19 +59,23 @@ namespace CCsearch
             }
         }
 
-        private void DebugMode()
+        private void DebugMode(Action act)
         {
-            Debug.Listeners.Add(DListener);
-            Debug.AutoFlush = true;
+            lock (this)
+            {
+                Debug.Listeners.Add(DListener);
+                Debug.AutoFlush = true;
 
-            DateTime StartTime = DateTime.Now;
+                DateTime StartTime = DateTime.Now;
 
-            PreloadSearch();
+                Dispatcher.Invoke(act);
+                //PreloadSearch();
 
-            DateTime EndTime = DateTime.Now;
-            TimeSpan TimeInterval = EndTime.Subtract(StartTime);
-            Debug.WriteLine(String.Format("Время предзагрузки данных - {0}", TimeInterval.ToString()));
-            DebugText.Text += String.Format("\r\nВремя предзагрузки данных - {0}", TimeInterval.ToString());
+                DateTime EndTime = DateTime.Now;
+                TimeSpan TimeInterval = EndTime.Subtract(StartTime);
+                Debug.WriteLine(String.Format("Время предзагрузки данных - {0}", TimeInterval.ToString()));
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя предзагрузки данных - {0}, act= {1}", TimeInterval.ToString(), act.Target.ToString() ); }));
+            }
         }
 
         private void SearchWindow_Loaded(object sender, RoutedEventArgs e)
@@ -81,15 +86,26 @@ namespace CCsearch
 
         private void PreloadSearch()
         {
-            PreloadACmpn();
+            Thread MpnThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACmpn(); }); }));
+            Thread InterThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACInter(); }); }));
+            Thread FarmThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACFarm(); }); }));
+            Thread CityThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACCity(); }); }));
+
+            MpnThread.Start();
+            InterThread.Start();
+            FarmThread.Start();
+            CityThread.Start();
+            
+            /*PreloadACmpn();
             PreloadACInter();
             PreloadACFarm();
-            PreloadACCity();
+            PreloadACCity();*/
         }
 
         #region Preloads
         private void PreloadACmpn()
         {
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             string sql = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id ORDER BY name";
             SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
             ch_d_1_dbc.Open();
@@ -110,14 +126,14 @@ namespace CCsearch
             }
             finally
             {
-                MPNList.ItemsSource = mpns;
-                MPN.ItemsSource = mpns;
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { MPNList.ItemsSource = mpns; MPN.ItemsSource = mpns; }));
                 data.Close();
                 ch_d_1_dbc.Close();
             }
         }
         private void PreloadACInter()
         {
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             string sql = "SELECT international_name_name as iname, international_name_id as id FROM international_name WITH (NOLOCK) WHERE in_sinonim_flag = 1 ORDER BY international_name_name ASC";
             SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
             ch_d_1_dbc.Open();
@@ -134,14 +150,14 @@ namespace CCsearch
             }
             finally
             {
-                Inter.ItemsSource = inters;
-                InterList.ItemsSource = inters;
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { Inter.ItemsSource = inters; InterList.ItemsSource = inters; }));
                 data.Close();
                 ch_d_1_dbc.Close();
             }
         }
         private void PreloadACFarm()
         {
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             string sql = "SELECT a.pharmacological_group_id as id, a.pharmacological_group_name as fname FROM pharmacological_group a WITH (NOLOCK) WHERE a.pg_analog_flag = 1 ORDER BY a.pharmacological_group_name ASC";
             SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
             ch_d_1_dbc.Open();
@@ -158,14 +174,14 @@ namespace CCsearch
             }
             finally
             {
-                Farm.ItemsSource = farms;
-                FarmList.ItemsSource = farms;
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { Farm.ItemsSource = farms; FarmList.ItemsSource = farms; }));
                 data.Close();
                 ch_d_1_dbc.Close();
             }
         }
         private void PreloadACCity()
         {
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             string sql = "SELECT a.area_name as cname, a.area_id as id FROM area a WITH (NOLOCK) WHERE a.area_SortCode > 0 ORDER BY a.area_SortCode ASC";
             SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
             ch_d_1_dbc.Open();
@@ -182,17 +198,19 @@ namespace CCsearch
             }
             finally
             {
-                City.ItemsSource = cities;
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { City.ItemsSource = cities; }));
                 data.Close();
                 ch_d_1_dbc.Close();
             }
         }
         private void PreloadACComplex()
         {
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             complexies.Clear();
             CityClass selectedCity = (CityClass)City.SelectedItem;
-            string sql = String.Format("SELECT a.complex_name as name, a.complex_id as id FROM complex a WITH (NOLOCK) WHERE a.area_id = {0} ORDER BY a.complex_code ASC", selectedCity.GetID());
+            string sql = "SELECT a.complex_name as name, a.complex_id as id FROM complex a WITH (NOLOCK) WHERE a.area_id = @city ORDER BY a.complex_code ASC";
             SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
+            sc.Parameters.AddWithValue("@city", selectedCity.GetID());
             ch_d_1_dbc.Open();
             SqlDataReader data = sc.ExecuteReader();
 
@@ -207,7 +225,7 @@ namespace CCsearch
             }
             finally
             {
-                Address.ItemsSource = complexies;
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { Address.ItemsSource = complexies; }));
                 data.Close();
                 ch_d_1_dbc.Close();
             }
@@ -322,19 +340,32 @@ namespace CCsearch
         private void MPNList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             MPNClass SelItem = (MPNClass)MPNList.SelectedItem;
+            Thread SelThread = new Thread(new ThreadStart(delegate { SinonimsAnalogsAction(SelItem); }));
+            SelThread.Start();
+        }
+
+        #endregion
+
+        #region action for list events
+        public void SinonimsAnalogsAction(MPNClass SelItem)
+        {
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
+
+            Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\n{0}, {1}, {2}", SelItem.ToString(), SelItem.GetInterID(), SelItem.GetFarmID()); }));
             int MpnId = SelItem.GetID();
             int InterId = SelItem.GetInterID();
             int FarmId = SelItem.GetFarmID();
-            string sql_sinonim = String.Format("SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id  WHERE mpn.international_name_id = {0} ORDER BY mpn.medical_product_name_name ASC", InterId);
-            string sql_farm_analog = String.Format("SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name  FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.pharmacological_group_id = {0} ORDER BY mpn.medical_product_name_name ASC", FarmId);
+            string sql_sinonim = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id  WHERE mpn.international_name_id = @inter  AND i.in_sinonim_flag = 1 ORDER BY mpn.medical_product_name_name ASC";
+            string sql_farm_analog = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name  FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.pharmacological_group_id = @farm AND f.pg_analog_flag = 1 ORDER BY mpn.medical_product_name_name ASC";
             //Sinonims
             SqlCommand sc = new SqlCommand(sql_sinonim, ch_d_1_dbc);
+            sc.Parameters.AddWithValue("@inter", InterId);
             ch_d_1_dbc.Open();
             SqlDataReader data = sc.ExecuteReader();
 
             try
             {
-                sinonims.Clear();
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { sinonims.Clear(); }));
                 while (data.Read())
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
@@ -343,23 +374,24 @@ namespace CCsearch
                     int interId = Convert.ToInt32(data["inter_id"].ToString());
                     int farmId = Convert.ToInt32(data["farm_id"].ToString());
                     string farmName = data["farm_name"].ToString();
-                    sinonims.Add(new MPNClass(id, name, interId, interName, farmId, farmName));
+                    Dispatcher.BeginInvoke(new ThreadStart(delegate { sinonims.Add(new MPNClass(id, name, interId, interName, farmId, farmName)); }));
                 }
             }
             finally
             {
-                Synonim.ItemsSource = sinonims;
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { Synonim.ItemsSource = sinonims; }));
                 ch_d_1_dbc.Close();
                 data.Close();
             }
             //Analogs
             SqlCommand sc_a = new SqlCommand(sql_farm_analog, ch_d_1_dbc);
+            sc_a.Parameters.AddWithValue("@farm", FarmId);
             ch_d_1_dbc.Open();
             SqlDataReader data_a = sc_a.ExecuteReader();
 
             try
             {
-                analogs.Clear();
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { analogs.Clear(); }));
                 while (data_a.Read())
                 {
                     int id = Convert.ToInt32(data_a["id"].ToString());
@@ -368,21 +400,17 @@ namespace CCsearch
                     int interId = Convert.ToInt32(data_a["inter_id"].ToString());
                     int farmId = Convert.ToInt32(data_a["farm_id"].ToString());
                     string farmName = data_a["farm_name"].ToString();
-                    analogs.Add(new MPNClass(id, name, interId, interName, farmId, farmName));
+                    Dispatcher.BeginInvoke(new ThreadStart(delegate { analogs.Add(new MPNClass(id, name, interId, interName, farmId, farmName)); }));
                 }
             }
             finally
             {
-                Analogs.ItemsSource = analogs;
-                ch_d_1_dbc.Close();
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { Analogs.ItemsSource = analogs; }));
+                ch_d_1_dbc.Dispose();
                 data_a.Close();
             }
-            
         }
-
         #endregion
-
-
 
 
 

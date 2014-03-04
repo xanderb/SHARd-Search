@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CCsearch.Classes
+namespace CCsearch
 {
-    class SQLWrapper
+    class ControlEvents
     {
-
+        
     }
 }

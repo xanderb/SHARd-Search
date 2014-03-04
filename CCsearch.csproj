@@ -87,10 +87,10 @@
     </Compile>
     <Compile Include="Classes\CityClass.cs" />
     <Compile Include="Classes\ComplexClass.cs" />
+    <Compile Include="Classes\ControlEvents.cs" />
     <Compile Include="Classes\FarmClass.cs" />
     <Compile Include="Classes\InterClass.cs" />
     <Compile Include="Classes\MPNClass.cs" />
-    <Compile Include="Classes\SQLWrapper.cs" />
     <Compile Include="SearchWindow.xaml.cs">
       <DependentUpon>SearchWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
