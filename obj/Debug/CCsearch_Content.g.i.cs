@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("dlls/standalone_wpftoolkit.dll")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("old-edit-find_7373.ico")]
 
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CCsearch
 {
-    class CityClass
+    public class CityClass
     {
         int id;
         string cname;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CCsearch
 {
-    class ComplexClass
+    public class ComplexClass
     {
         int id;
         string name;

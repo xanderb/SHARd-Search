@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 
 namespace CCsearch
 {
-    class FarmClass
+    public class FarmClass
     {
         int id;
         string fname;
+        bool is_analog;
 
-        public FarmClass(int id, string name)
+        public FarmClass(int id, string name, bool is_analog)
         {
             this.id = id;
             this.fname = name;
+            this.is_analog = is_analog;
         }
 
         public int GetID()
@@ -27,5 +29,9 @@ namespace CCsearch
             return this.fname;
         }
 
+        public bool IsAnalog()
+        {
+            return this.is_analog;
+        }
     }
 }

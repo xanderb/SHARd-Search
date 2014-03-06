@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace CCsearch
 {
-    class InterClass
+    public class InterClass
     {
         int id;
         string InterName;
+        bool is_sinonim;
 
-        public InterClass(int id, string name)
+        public InterClass(int id, string name, bool is_sinonim)
         {
             this.id = id;
             this.InterName = name;
+            this.is_sinonim = is_sinonim;
         }
-
         public int GetID()
         {
             return this.id;
@@ -25,6 +26,10 @@ namespace CCsearch
         public override string ToString()
         {
             return this.InterName;
+        }
+        public bool IsSinonim()
+        {
+            return this.is_sinonim;
         }
     }
 }

@@ -14,8 +14,10 @@ namespace CCsearch
         string interName;
         int farmId;
         string farmName;
+        bool isSinonim;
+        bool isAnalog;
 
-        public MPNClass(int id, string name, int inter_id, string inter_name, int farm_id, string farm_name)
+        public MPNClass(int id, string name, int inter_id, string inter_name, int farm_id, string farm_name, bool is_sinonim, bool is_analog)
         {
             this.id = id;
             this.name = name;
@@ -23,6 +25,8 @@ namespace CCsearch
             this.interName = inter_name;
             this.farmId = farm_id;
             this.farmName = farm_name;
+            this.isSinonim = is_sinonim;
+            this.isAnalog = is_analog;
         }
 
         public int GetID()
@@ -53,6 +57,14 @@ namespace CCsearch
         public string GetFarmName()
         {
             return this.farmName;
+        }
+        public bool IsSinonim()
+        {
+            return this.isSinonim;
+        }
+        public bool IsAnalog()
+        {
+            return this.isAnalog;
         }
     }
 }
