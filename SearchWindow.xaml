@@ -1,9 +1,10 @@
 ﻿<Window 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     x:Name="SearchWindow" 
     x:Class="CCsearch.MainWindow" 
+    xmlns:UserControl="clr-namespace:CCsearch"
     Title="Поиск Call Центр Справмедика" 
     Width="1200" 
     Height="600" 
@@ -19,6 +20,23 @@
             <GradientStop Color="#FFDADADA" Offset="1"/>
             <GradientStop Color="#FFF3F3F3"/>
         </LinearGradientBrush>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Name="Primary" x:Key="Primary">
+            <GradientStop Color="#FF0044CC" Offset="1"/>
+            <GradientStop Color="#FF0088CC" />
+        </LinearGradientBrush>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Name="NormalButton" x:Key="NormalButton">
+            <GradientStop Color="#FFE6E6E6" Offset="1"/>
+            <GradientStop Color="#FFFFFFFF" />
+        </LinearGradientBrush>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Name="Danger" x:Key="Danger">
+            <GradientStop Color="#FFBD362F" Offset="1"/>
+            <GradientStop Color="#FFEE5F5B" />
+        </LinearGradientBrush>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Name="Info" x:Key="Info">
+            <GradientStop Color="#FF2F96B4" Offset="1"/>
+            <GradientStop Color="#FF5BC0DE" />
+        </LinearGradientBrush>
+
         <Style x:Key="cbStyle">
             <Setter Property="Panel.Background" Value="White" />
         </Style>
@@ -41,13 +59,24 @@
             <Setter Property="FontFamily" Value="Helvetica" />
             <Setter Property="FontSize" Value="14" />
         </Style>
-        <Style x:Key="LBIStyle" x:Name="LBIStyle" TargetType="ListBoxItem">
-
+        <Style x:Key="RulledButtons" x:Name="RulledButtons" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource NormalButton}" />
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#33000000" />
+            <Setter Property="Padding" Value="5" />
+        </Style>
+        <Style x:Key="InfoButtons" x:Name="InfoButtons" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource Info}" />
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#33000000" />
+            <Setter Property="Padding" Value="5" />
         </Style>
     </Window.Resources>
     <Grid x:Name="MainGrid" Style="{StaticResource cbStyle}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="131"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="50"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
@@ -123,6 +152,7 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="3*"/>
             </Grid.RowDefinitions>
+            <TextBox x:Name="Filter" Margin="60,0,10,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Row="0" Width="Auto" MaxLines="1" VerticalContentAlignment="Center" KeyUp="Filter_KeyUp" GotFocus="Filter_GotFocus"/>
             <ComboBox x:Name="City" Margin="60,0,10,0" IsEditable="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Padding="3" VerticalAlignment="Center" Height="24" Grid.IsSharedSizeScope="True"  StaysOpenOnEdit="True" MaxDropDownHeight="300" ToolTip="Город клиента" Style="{StaticResource CB}" SelectionChanged="City_SelectionChanged" KeyUp="City_KeyUp" Grid.Row="1">
                 <ComboBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -170,10 +200,9 @@
                     </Label.OpacityMask>
                 </Label>
             </Border>
-            <TextBox x:Name="Filter" Margin="60,0,10,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Row="0" Width="Auto" MaxLines="1" VerticalContentAlignment="Center" KeyUp="Filter_KeyUp" GotFocus="Filter_GotFocus"/>
         </Grid>
-        <TextBox x:Name="DebugText" Margin="10,20,10,0" Grid.Column="2" TextWrapping="Wrap" Background="{DynamicResource ListH}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False" FontFamily="Times New Roman" FontSize="11" Grid.ColumnSpan="1" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.IsSharedSizeScope="True" MaxHeight="150" BorderBrush="#FF464646" SelectionBrush="#FF1B8DFF" Focusable="False" AllowDrop="False" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" />
-        <TabControl x:Name="MainTabs" Margin="10" Grid.Row="2" Width="Auto" Grid.ColumnSpan="3" SelectedIndex="0">
+        <TextBox x:Name="DebugText" Margin="10,20,10,0" Grid.Column="2" TextWrapping="Wrap" Background="{DynamicResource ListH}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False" FontFamily="Times New Roman" FontSize="11" Grid.ColumnSpan="1" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.IsSharedSizeScope="True" MaxHeight="150" BorderBrush="#FF464646" SelectionBrush="#FF1B8DFF" Focusable="False" AllowDrop="False" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" />
+        <TabControl x:Name="MainTabs" Margin="10,4,10,10" Grid.Row="2" Width="Auto" Grid.ColumnSpan="3" SelectedIndex="0" SelectionChanged="MainTabs_SelectionChanged">
             <TabItem Header="Наименования Препаратов" Style="{StaticResource TabsHead}">
                 <Grid x:Name="TableGrid" Margin="10">
                     <Grid.ColumnDefinitions>
@@ -181,7 +210,7 @@
                         <ColumnDefinition Width="3*"/>
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
-                    <ListBox x:Name="MPNList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}" SelectionChanged="MPNList_SelectionChanged" />
+                    <ListBox x:Name="MPNList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="MPNList_SelectionChanged" PreviewMouseDoubleClick="MPNList_PreviewMouseDoubleClick" />
                     <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" x:Name="BorderMPN">
                         <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="9,0,11,0" Width="Auto" Content="Торговое Наименование" />
                     </Border>
@@ -191,28 +220,37 @@
                     <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Visibility="Hidden" x:Name="BorderFarm">
                         <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" Content="Фармакологическая группа"   />
                     </Border>
-                    <ListBox x:Name="Synonim" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}" />
+                    <ListBox x:Name="Sinonim" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible" PreviewMouseDoubleClick="Sinonim_PreviewMouseDoubleClick" />
                     <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="1" >
                         <Label Content="Синоним" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
                     </Border>
-                    <ListBox x:Name="Analogs" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="2" ScrollViewer.VerticalScrollBarVisibility="Visible"  ItemContainerStyle="{StaticResource LBIStyle}" />
+                    <ListBox x:Name="Analog" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="2" ScrollViewer.VerticalScrollBarVisibility="Visible" PreviewMouseDoubleClick="Analog_PreviewMouseDoubleClick"  />
                     <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="2" >
                         <Label Content="Фармакологический аналог" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
                     </Border>
-                    <ListBox x:Name="InterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}"  Visibility="Hidden" SelectionChanged="InterList_SelectionChanged" />
-                    <ListBox x:Name="FarmList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}" Visibility="Hidden" SelectionChanged="FarmList_SelectionChanged" />
-                    <ListBox x:Name="FilterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" ItemContainerStyle="{StaticResource LBIStyle}" Visibility="Hidden" SelectionChanged="FilterList_SelectionChanged" />
+                    <ListBox x:Name="InterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" Visibility="Hidden" SelectionChanged="InterList_SelectionChanged" />
+                    <ListBox x:Name="FarmList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" Visibility="Hidden" SelectionChanged="FarmList_SelectionChanged" />
+                    <ListBox x:Name="FilterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"  Visibility="Hidden" SelectionChanged="FilterList_SelectionChanged" PreviewMouseDoubleClick="FilterList_PreviewMouseDoubleClick" />
                 </Grid>
             </TabItem>
             <TabItem Header="Формы и дозировки" Style="{StaticResource TabsHead}">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid>
+                    <TabControl Name="FormaTabs" HorizontalAlignment="Stretch" Height="Auto" Width="Auto" VerticalAlignment="Stretch">
+                                                
+                    </TabControl>
+                </Grid>
             </TabItem>
             <TabItem Header="Результаты поиска" Style="{StaticResource TabsHead}">
                 <Grid Background="#FFE5E5E5"/>
             </TabItem>
         </TabControl>
         <Label Content="Информация" Grid.Column="2" HorizontalAlignment="Left" Margin="10,-1,0,0" VerticalAlignment="Top" Width="218"/>
-        <CheckBox x:Name="LocalCheck" Content="Локальный режим" Grid.Column="2" Margin="10,0" IsChecked="True" Grid.Row="1" BorderThickness="1" VerticalAlignment="Top"/>
-
+        <CheckBox x:Name="LocalCheck" Content="Локальный режим" Grid.Column="2" Margin="9,0,11,0" IsChecked="True" Grid.Row="1" BorderThickness="1" VerticalAlignment="Top"/>
+        <Button Content="Добавить" HorizontalAlignment="Left" Margin="72,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}"/>
+        <Button Content="Очистить форму" HorizontalAlignment="Left" Margin="138,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}"/>
+        <Button x:Name="SelectedMPNSwitcher" Content="Выбранные позиции (0)" HorizontalAlignment="Left" Margin="242,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource InfoButtons}" Click="SelectedMPNSwitcher_Click"/>
+        <Button Content="Далее>>" HorizontalAlignment="Left" Margin="387,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Click="NextButton_Click" Style="{StaticResource RulledButtons}" Name="NextButton"/>
+        <Button Content="&lt;&lt;Назад" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}" Name="BackButton" IsEnabled="False" Click="BackButton_Click" />
+        <ListBox x:Name="SelectedMPN" Height="300" VerticalAlignment="Top" Margin="0,40,0,0" Grid.Row="1" Grid.RowSpan="2" Panel.ZIndex="5" Width="300" Visibility="Hidden"/>
     </Grid>
 </Window>

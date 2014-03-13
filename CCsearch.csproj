@@ -84,6 +84,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SecondPage.xaml.cs">
+      <DependentUpon>SecondPage.xaml</DependentUpon>
+    </Compile>
     <Page Include="SearchWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -95,12 +98,19 @@
     <Compile Include="Classes\CityClass.cs" />
     <Compile Include="Classes\ComplexClass.cs" />
     <Compile Include="Classes\FarmClass.cs" />
+    <Compile Include="Classes\FormaClass.cs" />
+    <Compile Include="Classes\FormEventArgs.cs" />
     <Compile Include="Classes\InterClass.cs" />
+    <Compile Include="Classes\MpClass.cs" />
     <Compile Include="Classes\MPNClass.cs" />
     <Compile Include="SearchWindow.xaml.cs">
       <DependentUpon>SearchWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SecondPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

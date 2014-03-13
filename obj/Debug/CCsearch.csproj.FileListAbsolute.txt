@@ -47,3 +47,6 @@ D:\Work\SHARd\CCsearch\bin\Debug\ru\System.Windows.Interactivity.resources.dll
 D:\Work\SHARd\CCsearch\bin\Debug\zh-Hans\System.Windows.Interactivity.resources.dll
 D:\Work\SHARd\CCsearch\bin\Debug\zh-Hant\System.Windows.Interactivity.resources.dll
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache
+D:\Work\SHARd\CCsearch\obj\Debug\SecondPage.baml
+D:\Work\SHARd\CCsearch\obj\Debug\SecondPage.g.cs
+D:\Work\SHARd\CCsearch\obj\Debug\CCsearch_MarkupCompile.lref

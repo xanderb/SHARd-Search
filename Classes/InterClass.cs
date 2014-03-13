@@ -18,6 +18,7 @@ namespace CCsearch
             this.InterName = name;
             this.is_sinonim = is_sinonim;
         }
+        public InterClass() { }
         public int GetID()
         {
             return this.id;
