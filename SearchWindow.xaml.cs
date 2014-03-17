@@ -882,9 +882,11 @@ namespace CCsearch
             string sel = fc.Selected.ToString();
             MessageBox.Show(String.Format("{0} - {1}", fc.FormaName, sel));
         }
-        private void FormaListViewSelected(object sender, RoutedEventArgs args)
+        public void FormaListViewSelected(object sender, RoutedEventArgs args)
         {
-            MessageBox.Show("Main Check!");
+            CheckBox cb = sender as CheckBox;
+            string ind = cb.Tag.ToString();
+            MessageBox.Show(ind);
         }
         #region Xaml cloning method
         public T XamlClone<T>(T source)

@@ -24,5 +24,11 @@ namespace CCsearch
         {
             InitializeComponent();
         }
+
+        private void LVCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            MainWindow mw = new MainWindow();
+            mw.FormaListViewSelected(sender, e);
+        }
     }
 }
