@@ -24,7 +24,7 @@
                         <GridViewColumn Header="Флаг" Width="35">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Tag="{Binding Index}" IsChecked="{Binding Path=Selected}" Checked="LVCheckBox_Checked" />
+                                    <CheckBox Tag="{Binding Index}" IsChecked="{Binding Path=Selected}" Name="FormaCheckbox" Click="FormaCheckbox_Click_1" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

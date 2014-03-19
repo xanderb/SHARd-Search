@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace CCsearch
 {
-    class FormaClass
+    public class FormaClass
     {
+        public int Index { get; set; }
         public Nullable<bool> Selected { get; set; }
         int Id;
         public string FormaName { get; set; }

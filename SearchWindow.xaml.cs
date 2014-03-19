@@ -49,8 +49,8 @@ namespace CCsearch
         ObservableCollection<MPNClass> filters = new ObservableCollection<MPNClass>();
         ObservableCollection<MPNClass> selectedMpns = new ObservableCollection<MPNClass>();
         ObservableCollection<FormaClass> forma = new ObservableCollection<FormaClass>();
-        Dictionary<int, ObservableCollection<FormaClass>> formas = new Dictionary<int, ObservableCollection<FormaClass>>();
-        Dictionary<int, ObservableCollection<MpClass>> mps = new Dictionary<int, ObservableCollection<MpClass>>();
+        public Dictionary<int, ObservableCollection<FormaClass>> formas = new Dictionary<int, ObservableCollection<FormaClass>>();
+        public Dictionary<int, ObservableCollection<MpClass>> mps = new Dictionary<int, ObservableCollection<MpClass>>();
         #endregion
 
         public MainWindow()
@@ -695,10 +695,11 @@ namespace CCsearch
             TabItem NewTab = new TabItem();
             MPNClass newMpn = (MPNClass)arg.NewItems[0];
             NewTab.Header = String.Format("{0}", newMpn.ToString());
-            GenerateFormaForm(newMpn, NewTab);
             FormaTabs.Items.Add(NewTab);
             NewTab.IsSelected = true;
             MainTabs.SelectedIndex = FormaPage;
+            Dispatcher.BeginInvoke(new ThreadStart(delegate { GenerateFormaForm(newMpn, NewTab); }));
+            
         }
         private void GenerateFormaForm(MPNClass MpnForma, TabItem TI)
         {
@@ -804,7 +805,7 @@ namespace CCsearch
             //gv.Columns.Add(gridColumn1);
             //FormaList.View = gv;
             
-            UserControl UC = new SecondPage();
+            UserControl UC = new SecondPage(this);
             try
             {
                 /*//But1.Content = MpnForma.ToString();
@@ -844,7 +845,7 @@ namespace CCsearch
         {
             MPNClass mpn = (MPNClass)e.DataObject;
             ListView LV = (ListView)e.ControlObject;
-            int index = FormaTabs.Items.Count;
+            int index = FormaTabs.Items.Count - 1;
             ObservableCollection<FormaClass> formaSource = new ObservableCollection<FormaClass>();
             //Забираем инфу о формах выпуска из базы
             SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
@@ -861,7 +862,10 @@ namespace CCsearch
                     int id = Convert.ToInt32(data["mf_id"].ToString()); 
                     int MpnId = Convert.ToInt32(data["mpn_id"].ToString());
                     string FormaName = data["mf_name"].ToString();
-                    formaSource.Add(new FormaClass(id, MpnId, FormaName, true));
+                    FormaClass formaObj = new FormaClass(id, MpnId, FormaName, true);
+                    int ind = formaSource.Count;
+                    formaObj.Index = ind;
+                    formaSource.Add(formaObj);
                 }
                 formas.Add(index, formaSource); //Добавляем источник форм в общий словарь источников форм
             }
@@ -869,7 +873,6 @@ namespace CCsearch
             {
                 LV.Items.Clear();
                 LV.ItemsSource = formas[index]; //Присоединяем источник к списку из общего словаря*/
-
 
                 ch_d_1_dbc.Dispose();
                 data.Close();
@@ -884,9 +887,13 @@ namespace CCsearch
         }
         public void FormaListViewSelected(object sender, RoutedEventArgs args)
         {
-            CheckBox cb = sender as CheckBox;
-            string ind = cb.Tag.ToString();
-            MessageBox.Show(ind);
+            CheckBox Cb = sender as CheckBox;
+            int CbInd = Convert.ToInt32(Cb.Tag.ToString());
+            Dispatcher.BeginInvoke(new ThreadStart(delegate
+            {
+                int TabInd = FormaTabs.SelectedIndex;
+                //MessageBox.Show(String.Format("Индекс таба - {0}, индекс чекбокса - {1}, значение - {2}", TabInd, CbInd, formas[TabInd][CbInd].ToString()));
+            }));
         }
         #region Xaml cloning method
         public T XamlClone<T>(T source)

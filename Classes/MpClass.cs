@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CCsearch
 {
-    class MpClass
+    public class MpClass
     {
         public bool IsSelect;
         public string MpName;

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace CCsearch
 {
@@ -20,15 +21,30 @@ namespace CCsearch
     /// </summary>
     public partial class SecondPage : UserControl
     {
+        public MainWindow Main { get; set; }
+
         public SecondPage()
         {
             InitializeComponent();
         }
-
-        private void LVCheckBox_Checked(object sender, RoutedEventArgs e)
+        public SecondPage(MainWindow Main)
         {
-            MainWindow mw = new MainWindow();
-            mw.FormaListViewSelected(sender, e);
+            this.Main = Main;
+            InitializeComponent();
+        }
+
+        private void FormaCheckbox_Click_1(object sender, RoutedEventArgs e)
+        {
+            CheckBox Cb = sender as CheckBox;
+            int CbInd = Convert.ToInt32(Cb.Tag.ToString());
+            Dispatcher.BeginInvoke(new ThreadStart(delegate
+            {
+                if (Main.FormaTabs != null && Main.FormaTabs.SelectedIndex != -1)
+                {
+                    int TabInd = Main.FormaTabs.SelectedIndex;
+                    MessageBox.Show(String.Format("Индекс таба - {0}, индекс чекбокса - {1}, значение - {2}", TabInd, CbInd, Main.formas[TabInd][CbInd].ToString()));
+                }
+            }));
         }
     }
 }
