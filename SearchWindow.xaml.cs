@@ -610,6 +610,7 @@ namespace CCsearch
         }
         #endregion
 
+        #region Buttons
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
             ++MainTabs.SelectedIndex;
@@ -688,6 +689,12 @@ namespace CCsearch
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
         }
 
+        private void AddMpn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
+
         #region wpf controls work
 
         private void NewFormaTab(NotifyCollectionChangedEventArgs arg)
@@ -702,109 +709,7 @@ namespace CCsearch
             
         }
         private void GenerateFormaForm(MPNClass MpnForma, TabItem TI)
-        {
-            //Grid FormaGrid = new Grid();
-            //ColumnDefinition cd = new ColumnDefinition();
-            //GridLengthConverter glc = new GridLengthConverter();
-            //cd.Width = (GridLength)glc.ConvertFromString("2*");
-            //FormaGrid.ColumnDefinitions.Add(cd);
-            //FormaGrid.ColumnDefinitions.Add(cd);
-            //WrapPanel Wrapper = new WrapPanel();
-
-            //FormaGrid.Children.Add(Wrapper);
-
-            //Grid generator
-            //GridLengthConverter glConverter = new GridLengthConverter();
-
-            //Grid FormaGrid = new Grid();
-            //ColumnDefinition column1 = new ColumnDefinition();
-            //column1.Width = (GridLength)glConverter.ConvertFromString("2*");
-            //ColumnDefinition column2= new ColumnDefinition();
-            //column2.Width = (GridLength)glConverter.ConvertFromString("4*");
-            //FormaGrid.ColumnDefinitions.Add(column1);
-            //FormaGrid.ColumnDefinitions.Add(column2);
-
-            ////Buttons Generator
-            //ThicknessConverter ticConvert = new ThicknessConverter();
-
-            //Button FormaPlus = new Button();
-            //FormaPlus.Width = 25;
-            //FormaPlus.Height = 25;
-            //FormaPlus.Name = "FormaAll";
-            //FormaPlus.VerticalAlignment = VerticalAlignment.Top;
-            //FormaPlus.HorizontalAlignment = HorizontalAlignment.Left;
-            //FormaPlus.Content = "+";
-            //FormaPlus.Margin = (Thickness)ticConvert.ConvertFromString("5, 5, 0, 0");
-            //Grid.SetColumn(FormaPlus, 0);
-            //Button FormaMinus = new Button();
-            //FormaMinus.Width = 25;
-            //FormaMinus.Height = 25;
-            //FormaMinus.Name = "FormaEmpty";
-            //FormaMinus.VerticalAlignment = VerticalAlignment.Top;
-            //FormaMinus.HorizontalAlignment = HorizontalAlignment.Left;
-            //FormaMinus.Content = "-";
-            //FormaMinus.Margin = (Thickness)ticConvert.ConvertFromString("35, 5, 0, 0");
-            //Grid.SetColumn(FormaMinus, 0);
-            //Button FormaSearch = new Button();
-            //FormaSearch.Width = 120;
-            //FormaSearch.Height = 25;
-            //FormaSearch.Name = "FormaSearch";
-            //FormaSearch.VerticalAlignment = VerticalAlignment.Top;
-            //FormaSearch.HorizontalAlignment = HorizontalAlignment.Left;
-            //FormaSearch.Content = "Поиск продуктов";
-            //FormaSearch.Margin = (Thickness)ticConvert.ConvertFromString("65, 5, 0, 0");
-            //Grid.SetColumn(FormaSearch, 0);
-
-
-            //Button MpPlus = new Button();
-            //MpPlus.Width = 25;
-            //MpPlus.Height = 25;
-            //MpPlus.Name = "MpAll";
-            //MpPlus.VerticalAlignment = VerticalAlignment.Top;
-            //MpPlus.HorizontalAlignment = HorizontalAlignment.Left;
-            //MpPlus.Content = "+";
-            //MpPlus.Margin = (Thickness)ticConvert.ConvertFromString("5, 5, 0, 0");
-            //Grid.SetColumn(MpPlus, 1);
-            //Button MpMinus = new Button();
-            //MpMinus.Width = 25;
-            //MpMinus.Height = 25;
-            //MpMinus.Name = "MpEmpty";
-            //MpMinus.VerticalAlignment = VerticalAlignment.Top;
-            //MpMinus.HorizontalAlignment = HorizontalAlignment.Left;
-            //MpMinus.Content = "+";
-            //MpMinus.Margin = (Thickness)ticConvert.ConvertFromString("35, 5, 0, 0");
-            //Grid.SetColumn(MpMinus, 1);
-            //Button MpSearch = new Button();
-            //MpSearch.Width = 120;
-            //MpSearch.Height = 25;
-            //MpSearch.Name = "MpSearch";
-            //MpSearch.VerticalAlignment = VerticalAlignment.Top;
-            //MpSearch.HorizontalAlignment = HorizontalAlignment.Left;
-            //MpSearch.Content = "Поиск аптек";
-            //MpSearch.Margin = (Thickness)ticConvert.ConvertFromString("65, 5, 0, 0");
-            //Grid.SetColumn(MpSearch, 1);
-
-            //FormaGrid.Children.Add(FormaPlus);FormaGrid.Children.Add(FormaMinus);FormaGrid.Children.Add(FormaSearch);
-            //FormaGrid.Children.Add(MpPlus);FormaGrid.Children.Add(MpMinus);FormaGrid.Children.Add(MpSearch);
-            
-            ////ListViews generations
-            //ListView FormaList = new ListView();
-            //FormaList.Name = "FormaGrid";
-            //FormaList.Margin = (Thickness)ticConvert.ConvertFromString("10,40,10,10");
-            //Grid.SetColumn(FormaList, 0);
-            //FormaList.HorizontalAlignment = HorizontalAlignment.Stretch;
-            //FormaList.VerticalAlignment = VerticalAlignment.Stretch;
-            
-            //GridView gv = new GridView();
-
-            //GridViewColumn gridColumn1 = new GridViewColumn();
-            //gridColumn1.Header = "Флаг";
-            //gridColumn1.Width = 30;
-            //CheckBox cb = new CheckBox();
-
-            //gv.Columns.Add(gridColumn1);
-            //FormaList.View = gv;
-            
+        {            
             UserControl UC = new SecondPage(this);
             try
             {
@@ -825,11 +730,10 @@ namespace CCsearch
                 FormEventArgs args = new FormEventArgs();
                 args.DataObject = MpnForma;
                 args.ControlObject = LV;
-                DynamicMfShow(args);
-                /*CB.Checked += (par1, par2) =>
-                    {
-                        FormaListViewSelected(CB, args);
-                    };*/
+                GenerateFormaSources(args);
+                LV = (ListView)UC.FindName("MpGrid");
+                args.ControlObject = LV;
+                GenerateMpSources(args);
             }
             catch (Exception except)
             {
@@ -841,7 +745,8 @@ namespace CCsearch
             }
         }
         #endregion
-        private void DynamicMfShow(FormEventArgs e)
+        
+        private void GenerateFormaSources(FormEventArgs e)
         {
             MPNClass mpn = (MPNClass)e.DataObject;
             ListView LV = (ListView)e.ControlObject;
@@ -878,38 +783,48 @@ namespace CCsearch
                 data.Close();
             }
         }
-        private void FormaListViewSelected(object sender, FormEventArgs e)
+        private void GenerateMpSources(FormEventArgs e)
         {
-            ListView lv = (ListView) sender;
-            FormaClass fc = (FormaClass)lv.SelectedItem;
-            string sel = fc.Selected.ToString();
-            MessageBox.Show(String.Format("{0} - {1}", fc.FormaName, sel));
-        }
-        public void FormaListViewSelected(object sender, RoutedEventArgs args)
-        {
-            CheckBox Cb = sender as CheckBox;
-            int CbInd = Convert.ToInt32(Cb.Tag.ToString());
-            Dispatcher.BeginInvoke(new ThreadStart(delegate
+            MPNClass mpn = (MPNClass)e.DataObject;
+            ListView LV = (ListView)e.ControlObject;
+            int index = FormaTabs.Items.Count - 1;
+            ObservableCollection<MpClass> mpSource = new ObservableCollection<MpClass>();
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
+            string sql = "SELECT mpn.medical_product_name_name as mpn, mpn.medical_product_name_id as mpn_id, mf.medical_form_name as mfn, mp.medical_product_id as mp_id, mp.medical_product_str as mp_str1, mp.medical_product_str2 as mp_str2, mp.medical_form_id as mf_id FROM medical_product mp WITH (NOLOCK) INNER JOIN medical_product_name mpn WITH (NOLOCK) ON mp.medical_product_name_id = mpn.medical_product_name_id INNER JOIN medical_form mf WITH (NOLOCK) ON mp.medical_form_id = mf.medical_form_id WHERE mp.medical_product_name_id = @mpn_id ORDER BY mpn.medical_product_name_name ASC, mp.medical_form_id ASC, mp.medical_product_str ASC";
+            SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
+            sc.Parameters.AddWithValue("@mpn_id", mpn.GetID());
+            ch_d_1_dbc.Open();
+            SqlDataReader data = sc.ExecuteReader();
+            try
             {
-                int TabInd = FormaTabs.SelectedIndex;
-                //MessageBox.Show(String.Format("Индекс таба - {0}, индекс чекбокса - {1}, значение - {2}", TabInd, CbInd, formas[TabInd][CbInd].ToString()));
-            }));
-        }
-        #region Xaml cloning method
-        public T XamlClone<T>(T source)
-        {
-            string savedObject = System.Windows.Markup.XamlWriter.Save(source);
+                //Dispatcher.BeginInvoke(new ThreadStart(delegate { analogs.Clear(); }));
+                while (data.Read())
+                {
+                    int id = Convert.ToInt32(data["mp_id"].ToString());
+                    int MpnId = Convert.ToInt32(data["mpn_id"].ToString());
+                    int FormaId = Convert.ToInt32(data["mf_id"].ToString());
+                    string FormaName = data["mfn"].ToString();
+                    string MpnName = data["mpn"].ToString();
+                    string str1 = data["mp_str1"].ToString();
+                    string str2 = data["mp_str2"].ToString();
 
-            // Load the XamlObject
-            StringReader stringReader = new StringReader(savedObject);
-            System.Xml.XmlReader xmlReader = System.Xml.XmlReader.Create(stringReader);
-            T target = (T)System.Windows.Markup.XamlReader.Load(xmlReader);
+                    MpClass mpObj = new MpClass(id, MpnId, FormaId, MpnName, FormaName, str1, str2, true);
+                    int ind = mpSource.Count;
+                    mpObj.Index = ind;
+                    mpSource.Add(mpObj);
+                }
+                mps.Add(index, mpSource); //Добавляем источник форм в общий словарь источников форм
+            }
+            finally
+            {
+                LV.Items.Clear();
+                LV.ItemsSource = mps[index]; //Присоединяем источник к списку из общего словаря*/
 
-            return target;
+                ch_d_1_dbc.Dispose();
+                data.Close();
+            }
         }
-        #endregion
-        
-        
+                
         //private void DynamicControl_Click(object sender, RoutedEventArgs e)
         //{
         //    Button testButton = new Button();

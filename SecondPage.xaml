@@ -11,11 +11,11 @@
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
-        <Button Content="+" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5, 5, 0, 0" Grid.Column="0" Name="FormaAll"></Button>
-        <Button Content="X" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="35, 5, 0, 0" Grid.Column="0" Name="FormaEmpty"></Button>
-        <Button Content="Поиск продуктов" Width="120" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="65, 5, 0, 0" Grid.Column="0" Name="MpSearch"></Button>
-        <Button Content="+" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5, 5, 0, 0" Grid.Column="1" Name="MpAll"></Button>
-        <Button Content="X" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="35, 5, 0, 0" Grid.Column="1" Name="MpEmpty"></Button>
+        <Button Content="+" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5, 5, 0, 0" Grid.Column="0" Name="FormaAll" Click="FormaAll_Click"></Button>
+        <Button Content="X" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="35, 5, 0, 0" Grid.Column="0" Name="FormaEmpty" Click="FormaEmpty_Click"></Button>
+        <Button Content="Поиск продуктов" Width="120" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="65, 5, 0, 0" Grid.Column="0" Name="MpSearch" Click="MpSearch_Click"></Button>
+        <Button Content="+" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5, 5, 0, 0" Grid.Column="1" Name="MpAll" Click="MpAll_Click"></Button>
+        <Button Content="X" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="35, 5, 0, 0" Grid.Column="1" Name="MpEmpty" Click="MpEmpty_Click"></Button>
         <Button Content="Поиск аптек" Width="100" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="65, 5, 0, 0" Grid.Column="1" Name="DdSearch"></Button>
         <ListView Name="FormaGrid" Height="Auto" Width="Auto" Margin="5, 40, 10, 10" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListView.View>
@@ -24,7 +24,7 @@
                         <GridViewColumn Header="Флаг" Width="35">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Tag="{Binding Index}" IsChecked="{Binding Path=Selected}" Name="FormaCheckbox" Click="FormaCheckbox_Click_1" />
+                                    <CheckBox Tag="{Binding Index}" IsChecked="{Binding Path=Selected, Mode=TwoWay}" Name="FormaCheckbox" Click="FormaCheckbox_Click_1" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -38,28 +38,46 @@
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
-            <!--<ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"  />
-                            <ColumnDefinition Width="Auto"  />
-                        </Grid.ColumnDefinitions>
-                        <CheckBox Grid.Column="0" IsChecked="{Binding Path=Selected}" Name="LVCheckBox" Checked="LVCheckBox_Checked"></CheckBox>
-                        <TextBlock Grid.Column="1" Text="{Binding Path=FormaName}"></TextBlock>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>-->
         </ListView>
         <ListView Name="MpGrid" Height="Auto" Width="Auto" Margin="5, 40, 10, 10" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
-                        <GridViewColumn Header="Флаг" Width="70" DisplayMemberBinding="{Binding Path=IsSelect}" />
-                        <GridViewColumn Header="Название" Width="Auto" DisplayMemberBinding="{Binding Path=MpName}" />
-                        <GridViewColumn Header="Форма выпуска" Width="Auto" DisplayMemberBinding="{Binding Path=FormaName}" />
-                        <GridViewColumn Header="Оп. 1" Width="150" DisplayMemberBinding="{Binding Path=Description1}" />
-                        <GridViewColumn Header="Оп. 2" Width="150" DisplayMemberBinding="{Binding Path=Description2}" />
+                        <GridViewColumn Header="Флаг" Width="35">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Path=Selected, Mode=TwoWay}" Tag="{Binding Path=Index}" Name="MpCheckbox"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Название" Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=MpName}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Форма выпуска" Width="Auto" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=FormaName}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Оп. 1" Width="Auto">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Description1}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Оп. 2" Width="Auto" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=Description2}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView.Columns>
                 </GridView>
             </ListView.View>
