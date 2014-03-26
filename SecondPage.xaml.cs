@@ -139,5 +139,81 @@ namespace CCsearch
                 data.Close();
             }
         }
+
+        private void FormaGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            int TabIndex = Main.FormaTabs.SelectedIndex;
+
+            ListBoxItem obj = sender as ListBoxItem;
+            if (obj.Content.GetType() == typeof( FormaClass ) )
+            {
+                FormaClass FaC = (FormaClass)obj.Content;
+                if (e.MouseDevice.Target.GetType() == typeof(TextBlock))
+                {
+                    TextBlock Target = (TextBlock)e.MouseDevice.Target;
+                    string Value = (string)FaC.GetValueByName(Target.Name);
+                    foreach (FormaClass fc in Main.formas[TabIndex])
+                    {
+                        if (fc.FormaName == Value)
+                            fc.Selected = true;
+                        else
+                            fc.Selected = false;
+                    }
+                    FormaGrid.Items.Refresh();
+                }
+            }
+            else
+            {
+                MpClass MpC = (MpClass)obj.Content;
+                if (e.MouseDevice.Target.GetType() == typeof(TextBlock))
+                {
+                    TextBlock Target = (TextBlock)e.MouseDevice.Target;
+                    string Value = (string)MpC.GetValueByName(Target.Name);
+                    int SelIndex = MpC.Index;
+                    string str = String.Format("{0}", Target.Name).ToLower();
+                    MessageBox.Show(str);
+                    switch (str)
+                    {
+                        case "mpname":
+                            foreach (MpClass mpcl in Main.mps[TabIndex])
+                            {
+                                if (mpcl.MpName == Value)
+                                    mpcl.Selected = true;
+                                else
+                                    mpcl.Selected = false;
+                            }
+                            break;
+                        case "formaname":
+                            foreach (MpClass mpcl in Main.mps[TabIndex])
+                            {
+                                if (mpcl.MpName == MpC.MpName)
+                                {
+                                    if (mpcl.FormaName == Value)
+                                        mpcl.Selected = true;
+                                }
+                                else
+                                    mpcl.Selected = false;
+                            }
+                            break;
+                    }
+                    MpGrid.Items.Refresh();
+                }
+            }
+            
+            //TextBlock tb = (TextBlock)sender;
+            //int RowIndex = Convert.ToInt32(tb.Tag.ToString());
+            //int TabIndex = Main.FormaTabs.SelectedIndex;
+            //ObservableCollection<FormaClass> Source = Main.formas[TabIndex];
+            //string SearchFormaName = Source[RowIndex].FormaName;
+            //foreach(FormaClass fc in Source)
+            //{
+            //    if (fc.FormaName == SearchFormaName)
+            //    { Main.formas[TabIndex][RowIndex].Selected = true; }
+            //    else
+            //    { Main.formas[TabIndex][RowIndex].Selected = false; }
+            //}
+            //FormaGrid.ItemsSource = Main.formas[TabIndex];
+            //FormaGrid.Items.Refresh();
+        }
     }
 }

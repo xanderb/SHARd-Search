@@ -47,5 +47,21 @@ namespace CCsearch
         {
             return this.FormaId;
         }
+        public object GetValueByName(string Option)
+        {
+            switch (Option)
+            {
+                case "FormaName":
+                    return this.FormaName;
+                case "MpName":
+                    return this.MpName;
+                case "Op1":
+                    return this.Description1;
+                case "Op2":
+                    return this.Description2;
+                default:
+                    return false;
+            }
+        }
     }
 }

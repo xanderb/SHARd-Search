@@ -80,7 +80,7 @@ namespace CCsearch
 
                 DateTime StartTime = DateTime.Now;
 
-                Dispatcher.Invoke(act);
+                Dispatcher.Invoke(act, System.Windows.Threading.DispatcherPriority.Render);
 
                 DateTime EndTime = DateTime.Now;
                 TimeSpan TimeInterval = EndTime.Subtract(StartTime);
