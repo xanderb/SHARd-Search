@@ -58,28 +58,28 @@
                         <GridViewColumn Header="Название" Width="Auto">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Path=MpName}" Name="MpName"  Width="Auto" />
+                                    <TextBlock Text="{Binding Path=MpName}" Name="MpName"  Width="200" TextWrapping="Wrap"  />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Форма выпуска" Width="Auto">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Path=FormaName}" Name="FormaName"  Width="Auto" />
+                                    <TextBlock Text="{Binding Path=FormaName}" Name="FormaName"  Width="100" TextWrapping="Wrap"  />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Оп. 1">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Path=Description1}" Name="Op1"  Width="Auto" />
+                                    <TextBlock Text="{Binding Path=Description1}" Name="Op1"  Width="200" TextWrapping="Wrap" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Оп. 2" Width="Auto" >
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Path=Description2}" Name="Op2" Width="Auto" />
+                                    <TextBlock Text="{Binding Path=Description2}" Name="Op2" Width="200" TextWrapping="Wrap"  />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

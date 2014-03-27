@@ -171,7 +171,6 @@ namespace CCsearch
                     string Value = (string)MpC.GetValueByName(Target.Name);
                     int SelIndex = MpC.Index;
                     string str = String.Format("{0}", Target.Name).ToLower();
-                    MessageBox.Show(str);
                     switch (str)
                     {
                         case "mpname":
@@ -190,6 +189,51 @@ namespace CCsearch
                                 {
                                     if (mpcl.FormaName == Value)
                                         mpcl.Selected = true;
+                                    else
+                                        mpcl.Selected = false;
+                                }
+                                else
+                                    mpcl.Selected = false;
+                            }
+                            break;
+                        case "op1":
+                            foreach (MpClass mpcl in Main.mps[TabIndex])
+                            {
+                                if (mpcl.MpName == MpC.MpName)
+                                {
+                                    if (mpcl.FormaName == MpC.FormaName)
+                                    {
+                                        if (mpcl.Description1 == Value)
+                                            mpcl.Selected = true;
+                                        else
+                                            mpcl.Selected = false;
+                                    }
+                                    else
+                                        mpcl.Selected = false;
+                                }
+                                else
+                                    mpcl.Selected = false;
+                            }
+                            break;
+                        case "op2":
+                            foreach (MpClass mpcl in Main.mps[TabIndex])
+                            {
+                                if (mpcl.MpName == MpC.MpName)
+                                {
+                                    if (mpcl.FormaName == MpC.FormaName)
+                                    {
+                                        if (mpcl.Description1 == MpC.Description1)
+                                        {
+                                            if(mpcl.Description2 == Value)
+                                                mpcl.Selected = true;
+                                            else
+                                                mpcl.Selected = false;
+                                        }
+                                        else
+                                            mpcl.Selected = false;
+                                    }
+                                    else
+                                        mpcl.Selected = false;
                                 }
                                 else
                                     mpcl.Selected = false;
