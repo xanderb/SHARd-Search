@@ -459,21 +459,24 @@ namespace CCsearch
         #region local actions for list events
         public void LocalSinonimsAnalogsAction(MPNClass SelItem)
         {
-            int InterId = SelItem.GetInterID();
-            int FarmId = SelItem.GetFarmID();
-            if (inters.Count > 0 && farms.Count > 0)
+            if (SelItem != null)
             {
-                sinonims.Clear();
-                analogs.Clear();
-                foreach(MPNClass item in mpns)
+                int InterId = SelItem.GetInterID();
+                int FarmId = SelItem.GetFarmID();
+                if (inters.Count > 0 && farms.Count > 0)
                 {
-                    if (item.GetInterID() == InterId && item.IsSinonim() == true)
+                    sinonims.Clear();
+                    analogs.Clear();
+                    foreach (MPNClass item in mpns)
                     {
-                        sinonims.Add(item);
-                    }
-                    if (item.GetFarmID() == FarmId && item.IsAnalog() == true)
-                    {
-                        analogs.Add(item);
+                        if (item.GetInterID() == InterId && item.IsSinonim() == true)
+                        {
+                            sinonims.Add(item);
+                        }
+                        if (item.GetFarmID() == FarmId && item.IsAnalog() == true)
+                        {
+                            analogs.Add(item);
+                        }
                     }
                 }
             }
@@ -664,6 +667,15 @@ namespace CCsearch
         private void MPNList_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MPNClass selectMpn = (MPNClass)MPNList.SelectedItem;
+            if (selectedMpns.Count != 0)
+            {
+                int TabIndex = Convert.ToInt32(selectedMpns[selectedMpns.Count - 1].Index) + 1;
+                selectMpn.Index = TabIndex;
+            }
+            else
+            {
+                selectMpn.Index = 0;
+            }
             selectedMpns.Add(selectMpn);
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
         }
@@ -671,6 +683,15 @@ namespace CCsearch
         private void FilterList_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MPNClass selectMpn = (MPNClass)FilterList.SelectedItem;
+            if (selectedMpns.Count != 0)
+            {
+                int TabIndex = Convert.ToInt32(selectedMpns[selectedMpns.Count - 1].Index) + 1;
+                selectMpn.Index = TabIndex;
+            }
+            else
+            {
+                selectMpn.Index = 0;
+            }
             selectedMpns.Add(selectMpn);
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
         }
@@ -678,6 +699,15 @@ namespace CCsearch
         private void Sinonim_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MPNClass selectMpn = (MPNClass)Sinonim.SelectedItem;
+            if (selectedMpns.Count != 0)
+            {
+                int TabIndex = Convert.ToInt32(selectedMpns[selectedMpns.Count - 1].Index) + 1;
+                selectMpn.Index = TabIndex;
+            }
+            else
+            {
+                selectMpn.Index = 0;
+            }
             selectedMpns.Add(selectMpn);
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
         }
@@ -685,13 +715,50 @@ namespace CCsearch
         private void Analog_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MPNClass selectMpn = (MPNClass)Analog.SelectedItem;
+            if (selectedMpns.Count != 0)
+            {
+                int TabIndex = Convert.ToInt32(selectedMpns[selectedMpns.Count - 1].Index) + 1;
+                selectMpn.Index = TabIndex;
+            }
+            else
+            {
+                selectMpn.Index = 0;
+            }
             selectedMpns.Add(selectMpn);
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
+        }
+        private void ClearAll_Click(object sender, RoutedEventArgs e)
+        {
+            MPN.SelectedIndex = -1;
+            Inter.SelectedIndex = -1;
+            Farm.SelectedIndex = -1;
+            MPNList.SelectedIndex = -1;
+            InterList.SelectedIndex = -1;
+            FarmList.SelectedIndex = -1;
+            formas.Clear();
+            mps.Clear();
+            selectedMpns.Clear();
+            SelectedMPNSwitcher.Content = "Выбранные позиции (0)";
+            MainTabs.SelectedIndex = ListPage;
+            sinonims.Clear();
+            analogs.Clear();
+            filters.Clear();
+            Filter.Text = "";
+            Address.SelectedIndex = -1;
         }
 
         private void AddMpn_Click(object sender, RoutedEventArgs e)
         {
-
+            MainTabs.SelectedIndex = ListPage; 
+            MPN.SelectedIndex = -1;
+            Inter.SelectedIndex = -1;
+            Farm.SelectedIndex = -1;
+            MPNList.SelectedIndex = -1;
+            InterList.SelectedIndex = -1;
+            FarmList.SelectedIndex = -1;
+            Address.SelectedIndex = -1;
+            sinonims.Clear();
+            analogs.Clear();
         }
         #endregion
 
@@ -699,13 +766,21 @@ namespace CCsearch
 
         private void NewFormaTab(NotifyCollectionChangedEventArgs arg)
         {
-            TabItem NewTab = new TabItem();
-            MPNClass newMpn = (MPNClass)arg.NewItems[0];
-            NewTab.Header = String.Format("{0}", newMpn.ToString());
-            FormaTabs.Items.Add(NewTab);
-            NewTab.IsSelected = true;
-            MainTabs.SelectedIndex = FormaPage;
-            Dispatcher.BeginInvoke(new ThreadStart(delegate { GenerateFormaForm(newMpn, NewTab); }));
+            if (arg != null && arg.NewItems != null)
+            {
+                TabItem NewTab = new TabItem();
+                MPNClass newMpn = (MPNClass)arg.NewItems[0];
+                NewTab.Header = String.Format("{0}", newMpn.ToString());
+                NewTab.Tag = newMpn.Index;
+                FormaTabs.Items.Add(NewTab);
+                NewTab.IsSelected = true;
+                MainTabs.SelectedIndex = FormaPage;
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { GenerateFormaForm(newMpn, NewTab); }));
+            }
+            else
+            {
+                FormaTabs.Items.Clear();
+            }
             
         }
         private void GenerateFormaForm(MPNClass MpnForma, TabItem TI)
@@ -824,6 +899,25 @@ namespace CCsearch
                 data.Close();
             }
         }
+
+        private void SelectedMPN_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MainTabs.SelectedIndex = FormaPage;
+            int Index = SelectedMPN.SelectedIndex;
+            MPNClass SelectedItem = (MPNClass)SelectedMPN.SelectedItem;
+            int index = SelectedItem.Index;
+            foreach(object TI in FormaTabs.Items)
+            {
+                if (TI.GetType() == typeof(TabItem))
+                {
+                    TabItem Tab = (TabItem)TI;
+                    int tag = Convert.ToInt32(Tab.Tag.ToString());
+                    if (tag == index)
+                        Tab.IsSelected = true;
+                }
+            }
+        }
+
                 
         //private void DynamicControl_Click(object sender, RoutedEventArgs e)
         //{

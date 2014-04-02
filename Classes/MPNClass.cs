@@ -16,6 +16,7 @@ namespace CCsearch
         string farmName;
         bool isSinonim;
         bool isAnalog;
+        public int Index { get; set; }
 
         public MPNClass(int id, string name, int inter_id, string inter_name, int farm_id, string farm_name, bool is_sinonim, bool is_analog)
         {
