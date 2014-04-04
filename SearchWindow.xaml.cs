@@ -36,6 +36,7 @@ namespace CCsearch
         //SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
         //SqlConnection ch_php_dbc = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
         TextWriterTraceListener DListener = new TextWriterTraceListener(@"d:\work\LOGS\debugCCSearch.txt");
+        private BackgroundWorker worker;
 
 
         #region lists
@@ -127,15 +128,53 @@ namespace CCsearch
             FilterList.ItemsSource = filters;
             SelectedMPN.ItemsSource = selectedMpns;
 
-            Thread MpnThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACmpn(); }, "MPN"); }));
-            Thread InterThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACInter(); }, "Inter"); }));
-            Thread FarmThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACFarm(); }, "Pharm"); }));
-            Thread CityThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACCity(); }, "City"); }));
+            worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.WorkerSupportsCancellation = true;
 
-            MpnThread.Start();
-            InterThread.Start();
-            FarmThread.Start();
-            CityThread.Start();
+            worker.DoWork += delegate(object sender, DoWorkEventArgs e) 
+            {
+                worker.ReportProgress(0);
+                DebugMode(() => { PreloadACInter(); }, "Inter");
+                worker.ReportProgress(25);
+                DebugMode(() => { PreloadACFarm(); }, "Pharm");
+                worker.ReportProgress(50);
+                DebugMode(() => { PreloadACmpn(); }, "MPN");
+                worker.ReportProgress(75);
+                DebugMode(() => { PreloadACCity(); }, "City");
+                worker.ReportProgress(100);
+            };
+            worker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e)
+            {
+                Dispatcher.InvokeAsync(() => { LoadingBar.Value = e.ProgressPercentage; });
+            };
+            worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e)
+            {
+                if (e.Cancelled == true)
+                {
+                    Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nЗагрузка отменена"); });
+                }
+                else if (e.Error != null)
+                {
+                    Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nОшибка загрузки: "); });
+                }
+                else
+                {
+                    Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nУспешно загружено"); });
+                    LoadingWrap.Visibility = Visibility.Hidden;
+                    MainGrid.Visibility = Visibility.Visible;
+                }
+            };
+            worker.RunWorkerAsync();
+            //Thread MpnThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACmpn(); }, "MPN"); }));
+            //Thread InterThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACInter(); }, "Inter"); }));
+            //Thread FarmThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACFarm(); }, "Pharm"); }));
+            //Thread CityThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACCity(); }, "City"); }));
+
+            //Dispatcher.InvokeAsync(() => { MpnThread.Start(); });
+            //Dispatcher.InvokeAsync(() => { InterThread.Start(); });
+            //Dispatcher.InvokeAsync(() => { FarmThread.Start(); });
+            //Dispatcher.InvokeAsync(() => { CityThread.Start(); });
 
         }
 
@@ -267,6 +306,31 @@ namespace CCsearch
         #endregion
 
         #region combobox events
+        private void ChangeInterFarmComboBox(MPNClass source)
+        {
+            if (source != null)
+            {
+                Dispatcher.InvokeAsync(() =>
+                {
+                    for (int iter = 0; iter < inters.Count; iter++)
+                    {
+                        InterClass Interc = inters[iter];
+                        if (Interc.GetID() == source.GetInterID())
+                            Inter.SelectedIndex = iter;
+                    }
+                });
+                Dispatcher.InvokeAsync(() =>
+                {
+                    for (int iter = 0; iter < farms.Count; iter++)
+                    {
+                        FarmClass Pharmc = farms[iter];
+                        if (Pharmc.GetID() == source.GetFarmID())
+                            Farm.SelectedIndex = iter;
+                    }
+                });
+            }
+        }
+
         private void MPN_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             MPNClass sel_elem = (MPNClass)MPN.SelectedItem;
@@ -276,7 +340,7 @@ namespace CCsearch
                 MPNList.SelectedIndex = index;
                 MPNList.ScrollIntoView(MPNList.SelectedItem);
             }
-
+            ChangeInterFarmComboBox(sel_elem);
         }
         
         private void Inter_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -419,6 +483,7 @@ namespace CCsearch
                 Thread SelThread = new Thread(new ThreadStart(delegate { DebugMode(() => { if (LocalCheck.IsChecked == true) LocalSinonimsAnalogsAction(SelItem); else SinonimsAnalogsAction(SelItem); }, "Выбор в листинге фильтра"); }));
                 SelThread.SetApartmentState(ApartmentState.STA);
                 SelThread.Start();
+                ChangeInterFarmComboBox(SelItem);
             }
         }
         private void MPNList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -427,6 +492,7 @@ namespace CCsearch
             Thread SelThread = new Thread(new ThreadStart(delegate { DebugMode(() => { if (LocalCheck.IsChecked == true) LocalSinonimsAnalogsAction(SelItem); else SinonimsAnalogsAction(SelItem); }, "Листинг Наименований"); }));
             SelThread.SetApartmentState(ApartmentState.STA);
             SelThread.Start();
+            ChangeInterFarmComboBox(SelItem);
         }
         private void InterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -479,6 +545,7 @@ namespace CCsearch
                         }
                     }
                 }
+                ChangeInterFarmComboBox(SelItem);
             }
         }
         #endregion
