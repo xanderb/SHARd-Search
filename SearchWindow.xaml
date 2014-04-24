@@ -78,14 +78,24 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Grid Name="LoadingWrap">
+        <Grid Name="LoadingWrap" Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <TextBlock Margin="10,0" TextWrapping="Wrap" Text="Загрузка..." HorizontalAlignment="Center" FontSize="36"/>
-            <ProgressBar x:Name="LoadingBar" HorizontalAlignment="Center" Height="20" Margin="10,10,0,0" Grid.Row="1" Width="700" VerticalAlignment="Top"/>
-            <TextBox HorizontalAlignment="Left" Height="130" Margin="251,35,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="700" Name="TestBox"/>
+            <ProgressBar x:Name="InterBar" HorizontalAlignment="Center" Height="20" Margin="10,50,10,0" Grid.Row="1" Width="700" VerticalAlignment="Top" SmallChange="0.1"/>
+            <ProgressBar x:Name="FarmBar" HorizontalAlignment="Center" Height="20" Margin="10,100,10,0" Grid.Row="1" Width="700" VerticalAlignment="Top" SmallChange="0.1"/>
+            <ProgressBar x:Name="MpnBar" HorizontalAlignment="Center" Height="20" Margin="10,150,10,0" Grid.Row="1" Width="700" VerticalAlignment="Top" SmallChange="0.1"/>
+            <ProgressBar x:Name="CityBar" HorizontalAlignment="Center" Height="20" Margin="10,200,10,0" Grid.Row="1" Width="700" VerticalAlignment="Top" SmallChange="0.1"/>
+            <Label Content="Загрузка международных наименований" HorizontalAlignment="Stretch" Margin="10,25,0,0" Grid.Row="1" VerticalAlignment="Top" Width="700"/>
+            <Label Content="Загрузка фармакологических групп" HorizontalAlignment="Stretch" Margin="10,75,0,0" Grid.Row="1" VerticalAlignment="Top" Width="700"/>
+            <Label Content="Загрузка торговых наименований" HorizontalAlignment="Stretch" Margin="10,125,0,0" Grid.Row="1" VerticalAlignment="Top" Width="700"/>
+            <Label Content="Загрузка городов" HorizontalAlignment="Stretch" Margin="10,175,0,0" Grid.Row="1" VerticalAlignment="Top" Width="700"/>
+            <TextBlock x:Name="InterLoadingText" HorizontalAlignment="Stretch" Margin="10,55,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
+            <TextBlock x:Name="FarmLoadingText" HorizontalAlignment="Stretch" Margin="10,105,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
+            <TextBlock x:Name="MpnLoadingText" HorizontalAlignment="Stretch" Margin="10,155,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
+            <TextBlock x:Name="CityLoadingText" HorizontalAlignment="Stretch" Margin="10,205,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
 
         </Grid>
         <Grid x:Name="MainGrid" Style="{StaticResource cbStyle}" Width="Auto" Height="Auto" Visibility="Hidden">
@@ -215,7 +225,7 @@
                     </Label>
                 </Border>
             </Grid>
-            <TextBox x:Name="DebugText" Margin="10,20,10,0" Grid.Column="2" TextWrapping="Wrap" Background="{DynamicResource ListH}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False" FontFamily="Times New Roman" FontSize="11" Grid.ColumnSpan="1" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.IsSharedSizeScope="True" MaxHeight="150" BorderBrush="#FF464646" SelectionBrush="#FF1B8DFF" Focusable="False" AllowDrop="False" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" />
+            <TextBox x:Name="DebugText" Margin="10,20,10,0" Grid.Column="2" TextWrapping="Wrap" Background="{DynamicResource ListH}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="False" FontFamily="Times New Roman" FontSize="11" Grid.ColumnSpan="1" Padding="3" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.IsSharedSizeScope="True" MaxHeight="150" BorderBrush="#FF464646" SelectionBrush="#FF1B8DFF" Focusable="True" AllowDrop="False" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" />
             <TabControl x:Name="MainTabs" Margin="10,4,10,10" Grid.Row="2" Width="Auto" Grid.ColumnSpan="3" SelectedIndex="0" SelectionChanged="MainTabs_SelectionChanged">
                 <TabItem Header="Наименования Препаратов" Style="{StaticResource TabsHead}">
                     <Grid x:Name="TableGrid" Margin="10">
@@ -224,7 +234,7 @@
                             <ColumnDefinition Width="3*"/>
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
-                        <ListBox x:Name="MPNList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="MPNList_SelectionChanged" PreviewMouseDoubleClick="MPNList_PreviewMouseDoubleClick" />
+                        <ListBox x:Name="MPNList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="MPNList_SelectionChanged" MouseDoubleClick="MPNList_MouseDoubleClick" />
                         <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" x:Name="BorderMPN">
                             <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="9,0,11,0" Width="Auto" Content="Торговое Наименование" />
                         </Border>
@@ -234,17 +244,17 @@
                         <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Visibility="Hidden" x:Name="BorderFarm">
                             <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" Content="Фармакологическая группа"   />
                         </Border>
-                        <ListBox x:Name="Sinonim" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible" PreviewMouseDoubleClick="Sinonim_PreviewMouseDoubleClick" />
+                        <ListBox x:Name="Sinonim" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible"  SelectionChanged="Sinonim_SelectionChanged" MouseDoubleClick="Sinonim_MouseDoubleClick" />
                         <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="1" >
                             <Label Content="Синоним" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
                         </Border>
-                        <ListBox x:Name="Analog" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="2" ScrollViewer.VerticalScrollBarVisibility="Visible" PreviewMouseDoubleClick="Analog_PreviewMouseDoubleClick"  />
+                        <ListBox x:Name="Analog" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="2" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="Analog_MouseDoubleClick" SelectionChanged="Analog_SelectionChanged"  />
                         <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="2" >
                             <Label Content="Фармакологический аналог" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
                         </Border>
                         <ListBox x:Name="InterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" Visibility="Hidden" SelectionChanged="InterList_SelectionChanged" />
                         <ListBox x:Name="FarmList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" Visibility="Hidden" SelectionChanged="FarmList_SelectionChanged" />
-                        <ListBox x:Name="FilterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"  Visibility="Hidden" SelectionChanged="FilterList_SelectionChanged" PreviewMouseDoubleClick="FilterList_PreviewMouseDoubleClick" />
+                        <ListBox x:Name="FilterList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"  Visibility="Hidden" SelectionChanged="FilterList_SelectionChanged" MouseDoubleClick="FilterList_MouseDoubleClick" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="Формы и дозировки" Style="{StaticResource TabsHead}">
@@ -254,9 +264,8 @@
                         </TabControl>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Результаты поиска" Style="{StaticResource TabsHead}">
-                    <Grid>
-                    </Grid>
+                <TabItem Header="Результаты поиска" Style="{StaticResource TabsHead}" Name="FinalTab">
+                    
                 </TabItem>
             </TabControl>
             <Label Content="Информация" Grid.Column="2" HorizontalAlignment="Left" Margin="10,-1,0,0" VerticalAlignment="Top" Width="218"/>

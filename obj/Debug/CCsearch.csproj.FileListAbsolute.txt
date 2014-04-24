@@ -69,3 +69,5 @@ I:\!Development!\SHARdSearch\CCsearch\obj\Debug\SearchWindow.baml
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.g.resources
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.Properties.Resources.resources
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.csproj.GenerateResource.Cache
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\FinalPage.baml
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\FinalPage.g.cs
