@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,19 +33,37 @@ namespace CCsearch
         }
         private void FinalGrid_MouseDoubleClick(object sender, MouseButtonEventArgs args) {  }
 
-        private void TestButton_Click(object sender, RoutedEventArgs e)
+        private void SimpleAnswerButton_Click(object sender, RoutedEventArgs e)
         {
+            ObservableCollection<string> Texts = new ObservableCollection<string>();
             foreach (DrugstoreInfo final in Main.finals)
             {
                 if (final.Selected == true)
                 {
-                    Dispatcher.Invoke(
-                        () =>
-                        {
-                            Main.DebugText.Text += String.Format("\r\nВыбрана аптека - {0}, индекс строки - {1}", final.DDName, final.Index);
-                        }
-                    );
+                    Texts.Add(String.Format("{0} - {1} - {2}", final.DDName, final.DDAddress, final.DDTel));
                 }
+            }
+            AnswerWindow Answer = new AnswerWindow(Texts);
+            Answer.Show();
+        }
+
+        private void Lists_SpaceKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                ListView LV = (ListView)sender;
+
+                if (LV.SelectedItem is DrugstoreInfo)
+                {
+                    DrugstoreInfo Item = (DrugstoreInfo)LV.SelectedItem;
+                    int index = Item.Index;
+                    if (Item.Selected == false)
+                        Main.finals[index].Selected = true;
+                    else if (Item.Selected == true)
+                        Main.finals[index].Selected = false;
+                    LV.Items.Refresh();
+                }
+                
             }
         }
     }

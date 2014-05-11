@@ -1137,6 +1137,14 @@ namespace CCsearch
             }
         }
 
+        public void SetFirmId(int Firm)
+        {
+            FirmId = Firm;
+        }
+        public void SetUserId(int User)
+        {
+            UserId = User;
+        }
         //private void DynamicControl_Click(object sender, RoutedEventArgs e)
         //{
         //    Button testButton = new Button();

@@ -84,6 +84,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AnswerWindow.xaml.cs">
+      <DependentUpon>AnswerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Classes\DrugstoreInfo.cs" />
     <Compile Include="FinalPage.xaml.cs">
       <DependentUpon>FinalPage.xaml</DependentUpon>
@@ -91,6 +94,10 @@
     <Compile Include="SecondPage.xaml.cs">
       <DependentUpon>SecondPage.xaml</DependentUpon>
     </Compile>
+    <Page Include="AnswerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FinalPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

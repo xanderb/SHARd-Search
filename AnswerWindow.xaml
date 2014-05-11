@@ -1,0 +1,32 @@
+﻿<Window x:Name="SimpleAnswerWindow" x:Class="CCsearch.AnswerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AnswerWindow" Width="500" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="old-edit-find_7373.ico">
+    <Window.Resources>
+        <Style x:Name="HeaderSimple" x:Key="HeaderSimple" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontFamily" Value="Tahoma" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <Border BorderBrush="LightSteelBlue" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Top" Width="Auto" CornerRadius="5" Background="White" Grid.Row="0" Margin="3">
+            <TextBlock Style="{StaticResource HeaderSimple}" Width="Auto" HorizontalAlignment="Stretch" TextAlignment="Center" >
+                Голосовой ответ
+            </TextBlock>
+        </Border>
+        <Border BorderBrush="LightSteelBlue" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Top" Width="Auto" CornerRadius="5" Background="White" Grid.Row="1" Margin="5">
+            <ListBox HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Top"  Width="Auto" Name="SimpleAnswerList">
+                
+            </ListBox>
+        </Border>
+        <Button x:Name="CloseAnswerWindow" Content="Закрыть" HorizontalAlignment="Right" VerticalAlignment="top" Width="75" Margin="5" Height="20" Grid.Row="2" Click="CloseAnswerWindow_Click"/>
+
+    </Grid>
+</Window>

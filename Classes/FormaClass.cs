@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace CCsearch
 {
-    public class FormaClass
+    public class FormaClass : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
         public int Index { get; set; }
         public Nullable<bool> Selected { get; set; }
         int Id;
@@ -47,6 +52,18 @@ namespace CCsearch
                 default:
                     return false;
             }
+        }
+        public void onPropertyChanged(object sender, string propertyName, ObservableCollection<FormaClass> collection )
+        {
+
+            if (this.PropertyChanged != null)
+            {
+
+                PropertyChanged(sender, new PropertyChangedEventArgs(propertyName));
+                var view = CollectionViewSource.GetDefaultView(collection);
+                view.Refresh();
+            }
+
         }
     }
 }
