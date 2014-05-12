@@ -716,29 +716,24 @@ namespace CCsearch
         private void Forma_SpaceKeyUp(object sender, KeyEventArgs e)
         {
             ListView LV = (ListView)sender;
-            if (e.Key == Key.Space)
+            switch (e.Key)
             {
-                if (LV.SelectedItem is FormaClass)
-                {
-                    FormaClass Item = (FormaClass)LV.SelectedItem;
-                    int index = Item.Index;
-                    if (Item.Selected == false)
-                        Main.formas[Main.FormaTabs.SelectedIndex][index].Selected = true;
-                    else if (Item.Selected == true)
-                        Main.formas[Main.FormaTabs.SelectedIndex][index].Selected = false;
-                    LV.Items.Refresh();
-                }
+                case Key.Space:
+                    Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
+                    Main.DebugText.ScrollToEnd();
+                    if (LV.SelectedItem is FormaClass)
+                    {
+                        FormaClass Item = (FormaClass)LV.SelectedItem;
+                        int index = Item.Index;
+                        if (Item.Selected == false)
+                            Main.formas[Main.FormaTabs.SelectedIndex][index].Selected = true;
+                        else if (Item.Selected == true)
+                            Main.formas[Main.FormaTabs.SelectedIndex][index].Selected = false;
+                        //LV.Items.Refresh();
+                    }
+                    break;
             }
-            if (e.Key.Equals(Key.Down))
-            {
-                this.FormaRowIndex++;
-                LV.SelectedIndex = this.FormaRowIndex;
-            }
-            if (e.Key.Equals(Key.Up))
-            {
-                this.FormaRowIndex--;
-                LV.SelectedIndex = this.FormaRowIndex;
-            }
+           
         }
         private void MP_SpaceKeyUp(object sender, KeyEventArgs e)
         {
@@ -756,27 +751,10 @@ namespace CCsearch
                             Main.mps[Main.FormaTabs.SelectedIndex][index].Selected = true;
                         else if (Item.Selected == true)
                             Main.mps[Main.FormaTabs.SelectedIndex][index].Selected = false;
-                        LV.Items.Refresh();
+                        //LV.Items.Refresh();
                     }
                     break;
-                case Key.Down:
-                    this.MpRowIndex++;
-                    if (this.MpRowIndex > (LV.Items.Count - 1))
-                        this.MpRowIndex = LV.Items.Count - 1;
-                    LV.SelectedIndex = MpRowIndex;
-                    MpGrid.SelectedIndex = MpRowIndex;
-                    Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
-                    Main.DebugText.ScrollToEnd();
-                    break;
-                case Key.Up:
-                    this.MpRowIndex--;
-                    if (this.MpRowIndex < 0)
-                        this.MpRowIndex = 0;
-                    LV.SelectedIndex = MpRowIndex;
-                    MpGrid.SelectedIndex = MpRowIndex;
-                    Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
-                    Main.DebugText.ScrollToEnd();
-                    break;
+                
             }
         }
 

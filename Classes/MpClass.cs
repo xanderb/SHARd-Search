@@ -3,13 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace CCsearch
 {
-    public class MpClass
+    public class MpClass : INotifyPropertyChanged
     {
+        private Nullable<bool> _Select;
         public int Index { get; set; }
-        public Nullable<bool> Selected { get; set; }
+        public Nullable<bool> Selected 
+        {
+            get
+            {
+                return this._Select;
+            }
+            set
+            {
+                if (value != this._Select)
+                {
+                    this._Select = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public string MpName { get; set; }
         public string FormaName { get; set; }
         public string Description1 { get; set; }
@@ -17,6 +34,19 @@ namespace CCsearch
         int MpnId;
         int MpId;
         int FormaId;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        // This method is called by the Set accessor of each property. 
+        // The CallerMemberName attribute that is applied to the optional propertyName 
+        // parameter causes the property name of the caller to be substituted as an argument. 
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         public MpClass(int MpId, int MpnId, int FormaId, string MpName, string FormaName, string Description1, string Description2, bool IsSelect)
         {

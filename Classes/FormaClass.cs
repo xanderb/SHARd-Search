@@ -7,17 +7,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Runtime.CompilerServices;
 
 namespace CCsearch
 {
     public class FormaClass : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+        private Nullable<bool> _Select;
         public int Index { get; set; }
-        public Nullable<bool> Selected { get; set; }
+        public Nullable<bool> Selected 
+        {
+            get
+            {
+                return this._Select;
+            }
+            set
+            {
+                if (value != this._Select)
+                {
+                    this._Select = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         int Id;
         public string FormaName { get; set; }
         int MpnId;
+
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         public FormaClass(int Id, int MpnId, string Forma, Nullable<bool> IsSelect)
         {

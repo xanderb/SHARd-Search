@@ -54,20 +54,22 @@ namespace CCsearch
 
         private void Lists_SpaceKeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Space)
+            ListView LV = (ListView)sender;
+            switch (e.Key)
             {
-                ListView LV = (ListView)sender;
-
-                if (LV.SelectedItem is DrugstoreInfo)
-                {
-                    DrugstoreInfo Item = (DrugstoreInfo)LV.SelectedItem;
-                    int index = Item.Index;
-                    if (Item.Selected == false)
-                        Main.finals[index].Selected = true;
-                    else if (Item.Selected == true)
-                        Main.finals[index].Selected = false;
-                    LV.Items.Refresh();
-                }
+                case Key.Space:
+                    Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
+                    Main.DebugText.ScrollToEnd();
+                    if (LV.SelectedItem is DrugstoreInfo)
+                    {
+                        DrugstoreInfo Item = (DrugstoreInfo)LV.SelectedItem;
+                        int index = Item.Index;
+                        if (Item.Selected == false)
+                            Main.finals[index].Selected = true;
+                        else if (Item.Selected == true)
+                            Main.finals[index].Selected = false;
+                    }
+                    break;
                 
             }
         }

@@ -5,13 +5,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace CCsearch
 {
-    public class DrugstoreInfo
+    public class DrugstoreInfo :INotifyPropertyChanged
     {
+        private Nullable<bool> _Select;
         public int Index { get; set; }
-        public Nullable<bool> Selected { get; set; }
+        public Nullable<bool> Selected 
+        {
+            get
+            {
+                return this._Select;
+            }
+            set
+            {
+                if (value != this._Select)
+                {
+                    this._Select = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         
         public int PageNum { get; set; }
         public bool HalfLife { get; set; }
@@ -58,6 +75,15 @@ namespace CCsearch
         public Nullable<bool> IsVoiced { get; set; }
         public int DDCount { get; set; }
         public int FindKey { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged; 
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
         public DrugstoreInfo( IDataRecord rdr )
         {

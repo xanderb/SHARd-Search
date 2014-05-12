@@ -73,3 +73,7 @@ I:\!Development!\SHARdSearch\CCsearch\obj\Debug\FinalPage.baml
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\FinalPage.g.cs
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\AnswerWindow.baml
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\AnswerWindow.g.cs
+D:\Work\SHARd\CCsearch\obj\Debug\AnswerWindow.baml
+D:\Work\SHARd\CCsearch\obj\Debug\FinalPage.baml
+D:\Work\SHARd\CCsearch\obj\Debug\AnswerWindow.g.cs
+D:\Work\SHARd\CCsearch\obj\Debug\FinalPage.g.cs
