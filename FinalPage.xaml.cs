@@ -36,11 +36,16 @@ namespace CCsearch
         private void SimpleAnswerButton_Click(object sender, RoutedEventArgs e)
         {
             ObservableCollection<string> Texts = new ObservableCollection<string>();
+            List<int> DDIds = new List<int>();
             foreach (DrugstoreInfo final in Main.finals)
             {
                 if (final.Selected == true)
                 {
-                    Texts.Add(String.Format("{0} - {1} - {2}", final.DDName, final.DDAddress, final.DDTel));
+                    if (DDIds.IndexOf(final.DDId) < 0)
+                    {
+                        Texts.Add(String.Format("{0} - {1} - {2}", final.DDName, final.DDAddress, final.DDTel));
+                        DDIds.Add(final.DDId);
+                    }
                 }
             }
             AnswerWindow Answer = new AnswerWindow(Texts);
