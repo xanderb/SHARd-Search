@@ -22,7 +22,7 @@
         <Button Content="+" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5, 5, 0, 0" Grid.Column="1" Name="MpAll" Click="MpAll_Click"></Button>
         <Button Content="X" Width="25" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="35, 5, 0, 0" Grid.Column="1" Name="MpEmpty" Click="MpEmpty_Click"></Button>
         <Button Content="Поиск аптек" Width="100" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="65, 5, 0, 0" Grid.Column="1" Name="DdSearch" Click="DdSearch_Click"></Button>
-        <Button Content="Поиск по всем городам" Width="170" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="170, 5, 0, 0" Grid.Column="1" Name="DdAllSearch"></Button>
+        <Button Content="Поиск по всем городам" Width="170" Height="25" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="170, 5, 0, 0" Grid.Column="1" Name="DdAllSearch" Click="DdAllSearch_Click"></Button>
         <ListView Name="FormaGrid" Height="Auto" Width="Auto" Margin="5, 40, 10, 10" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemContainerStyle="{StaticResource LVDC}" KeyUp="Forma_SpaceKeyUp" >
             <ListView.View>
                 <GridView>

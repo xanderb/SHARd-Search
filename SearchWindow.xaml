@@ -59,6 +59,10 @@
             <Setter Property="FontFamily" Value="Helvetica" />
             <Setter Property="FontSize" Value="14" />
         </Style>
+        <Style x:Key="TextField" x:Name="TextField" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Helvetica" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
         <Style x:Key="RulledButtons" x:Name="RulledButtons" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource NormalButton}" />
             <Setter Property="Foreground" Value="Black"/>
@@ -92,10 +96,10 @@
             <Label Content="Загрузка фармакологических групп" HorizontalAlignment="Stretch" Margin="10,75,0,0" Grid.Row="1" VerticalAlignment="Top" Width="700"/>
             <Label Content="Загрузка торговых наименований" HorizontalAlignment="Stretch" Margin="10,125,0,0" Grid.Row="1" VerticalAlignment="Top" Width="700"/>
             <Label Content="Загрузка городов" HorizontalAlignment="Stretch" Margin="10,175,0,0" Grid.Row="1" VerticalAlignment="Top" Width="700"/>
-            <TextBlock x:Name="InterLoadingText" HorizontalAlignment="Stretch" Margin="10,55,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
-            <TextBlock x:Name="FarmLoadingText" HorizontalAlignment="Stretch" Margin="10,105,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
-            <TextBlock x:Name="MpnLoadingText" HorizontalAlignment="Stretch" Margin="10,155,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
-            <TextBlock x:Name="CityLoadingText" HorizontalAlignment="Stretch" Margin="10,205,10,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
+            <TextBlock x:Name="InterLoadingText" HorizontalAlignment="Stretch" Margin="546,28,546,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
+            <TextBlock x:Name="FarmLoadingText" HorizontalAlignment="Stretch" Margin="546,78,546,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
+            <TextBlock x:Name="MpnLoadingText" HorizontalAlignment="Stretch" Margin="546,128,546,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
+            <TextBlock x:Name="CityLoadingText" HorizontalAlignment="Stretch" Margin="546,178,546,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
 
         </Grid>
         <Grid x:Name="MainGrid" Style="{StaticResource cbStyle}" Width="Auto" Height="Auto" Visibility="Hidden">
@@ -177,7 +181,7 @@
                     <RowDefinition Height="3*"/>
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
-                <TextBox x:Name="Filter" Margin="60,0,10,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Row="0" Width="Auto" MaxLines="1" VerticalContentAlignment="Center" KeyUp="Filter_KeyUp" GotFocus="Filter_GotFocus"/>
+                <TextBox x:Name="Filter" Margin="60,0,10,0" TextWrapping="Wrap" VerticalAlignment="Center" Height="24" Grid.Row="0" Width="Auto" MaxLines="1" VerticalContentAlignment="Center" KeyUp="Filter_KeyUp" GotFocus="Filter_GotFocus" Style="{StaticResource TextField}"/>
                 <ComboBox x:Name="Inter" Margin="60,0,10,0" IsEditable="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Padding="3" VerticalAlignment="Center" Height="24" Grid.IsSharedSizeScope="True" StaysOpenOnEdit="True" MaxDropDownHeight="300" ToolTip="Международное наименование медицинского продукта" Style="{StaticResource CB}" Grid.Row="1" GotFocus="Inter_GotFocus" SelectionChanged="Inter_SelectionChanged">
                     <ComboBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -277,6 +281,8 @@
             <Button Content="&lt;&lt;Назад" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}" Name="BackButton" IsEnabled="False" Click="BackButton_Click" />
             <ListBox x:Name="SelectedMPN" Height="300" VerticalAlignment="Top" Margin="0,40,0,0" Grid.Row="1" Grid.RowSpan="2" Panel.ZIndex="5" Width="300" Visibility="Hidden" SelectionChanged="SelectedMPN_SelectionChanged"  />
             <Button Content="Добавить" HorizontalAlignment="Left" Margin="72,10,0,0" Grid.Row="1" VerticalAlignment="Top" Style="{StaticResource RulledButtons}" Height="30" Click="AddMpn_Click" Name="AddMpn"/>
+            <ProgressBar x:Name="CommonProgressBar" Grid.Column="2" HorizontalAlignment="Stretch" Height="10" Grid.Row="2" VerticalAlignment="Top" Margin="10,0,10,0" />
+            <TextBlock x:Name="CommonProgressText" TextWrapping="Wrap" Grid.Column="2" Text="" Margin="10,10,10,0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="15" TextAlignment="Center"/>
         </Grid>
     </Grid>
 

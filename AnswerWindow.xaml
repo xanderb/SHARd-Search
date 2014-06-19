@@ -22,7 +22,7 @@
             </TextBlock>
         </Border>
         <Border BorderBrush="LightSteelBlue" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Top" Width="Auto" CornerRadius="5" Background="White" Grid.Row="1" Margin="5">
-            <ListBox HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Top"  Width="Auto" Name="SimpleAnswerList">
+            <ListBox HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Top"  Width="Auto" Name="SimpleAnswerList" FontSize="18">
                 
             </ListBox>
         </Border>

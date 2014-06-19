@@ -143,11 +143,11 @@ namespace CCsearch
                     this.DsComplexPriority = Convert.ToInt64(rdr["ds_complex_priority"].ToString());
                 if (rdr["search_count"] != null)
                     this.SearchCount = Convert.ToBoolean(rdr["search_count"]);
-                if (rdr["ds_mp_id"] != null)
+                if (rdr["ds_mp_id"] != null && rdr["ds_mp_id"].ToString() != "")
                     this.DsMpId = Convert.ToInt64(rdr["ds_mp_id"].ToString());
-                if (rdr["ds_mp_price"] != null)
+                if (rdr["ds_mp_price"] != null && rdr["ds_mp_price"].ToString() != "")
                     this.DsMpPrice = Convert.ToDouble(rdr["ds_mp_price"].ToString());
-                if (rdr["p_id"] != null)
+                if (rdr["p_id"] != null && rdr["p_id"].ToString() != "")
                     this.PackingId = Convert.ToInt32(rdr["p_id"].ToString());
                 if (rdr["p_name"] != null)
                     this.PackingName = rdr["p_name"].ToString();
@@ -173,8 +173,11 @@ namespace CCsearch
                     string str = rdr["load_str_lek_checks"].ToString();
                     this.LoadStrLekChecks = Convert.ToInt32(str);
                 }
-                if (rdr["pg_id"] != null)
-                    this.PgId = Convert.ToInt32(rdr["pg_id"].ToString());
+                if (rdr["pg_id"] != null && rdr["pg_id"].ToString() != "")
+                {
+                    string str = rdr["pg_id"].ToString();
+                    this.PgId = Convert.ToInt32(str);
+                }
                 if (rdr["pg_name"] != null)
                     this.PgName = rdr["pg_name"].ToString();
                 if (rdr["voice"] != null)
@@ -185,9 +188,9 @@ namespace CCsearch
                     else
                         this.IsVoiced = false;
                 }
-                if (rdr["dd_count"] != null)
+                if (rdr["dd_count"] != null && rdr["dd_count"].ToString() != "")
                     this.DDCount = Convert.ToInt32(rdr["dd_count"].ToString());
-                if (rdr["find_key"] != null)
+                if (rdr["find_key"] != null && rdr["find_key"].ToString() != "")
                     this.FindKey = Convert.ToInt32(rdr["find_key"].ToString()); 
             }
             Selected = false;

@@ -1,27 +1,18 @@
 ﻿using System;
-using System.Configuration;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data;
-using System.Data.Sql;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
+using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
-using System.IO;
+using System.Linq;
+
 
 namespace CCsearch
 {
@@ -36,22 +27,35 @@ namespace CCsearch
         //SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
         //SqlConnection ch_php_dbc = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
         TextWriterTraceListener DListener = new TextWriterTraceListener(@"d:\work\LOGS\debugCCSearch.txt");
-        private BackgroundWorker worker;
+        private BackgroundWorker worker = new BackgroundWorker();
         delegate void UpdateProgressBarDelegate(DependencyProperty dp, object value);
 
         public int FirmId = 0;
         public int UserId = 713;
-
+        private int CPUCores;
+        private int CPULogicalCores;
+        private string CPUName;
 
         #region lists
-        ObservableCollection<MPNClass> mpns = new ObservableCollection<MPNClass>();
-        ObservableCollection<InterClass> inters = new ObservableCollection<InterClass>();
-        ObservableCollection<FarmClass> farms = new ObservableCollection<FarmClass>();
-        ObservableCollection<CityClass> cities = new ObservableCollection<CityClass>();
+        //ObservableCollection<MPNClass> mpns = new ObservableCollection<MPNClass>();
+        //ObservableCollection<InterClass> inters = new ObservableCollection<InterClass>();
+        //ObservableCollection<FarmClass> farms = new ObservableCollection<FarmClass>();
+        //ObservableCollection<CityClass> cities = new ObservableCollection<CityClass>();
+        //ObservableCollection<ComplexClass> complexies = new ObservableCollection<ComplexClass>();
+        //ObservableCollection<MPNClass> sinonims = new ObservableCollection<MPNClass>();
+        //ObservableCollection<MPNClass> analogs = new ObservableCollection<MPNClass>();
+        //ObservableCollection<MPNClass> filters = new ObservableCollection<MPNClass>();
+        //ObservableCollection<MPNClass> selectedMpns = new ObservableCollection<MPNClass>();
+        //ObservableCollection<FormaClass> forma = new ObservableCollection<FormaClass>();
+
+        ObservableCollection<MPNClass> mpns;
+        ObservableCollection<InterClass> inters;
+        ObservableCollection<FarmClass> farms;
+        ObservableCollection<CityClass> cities;
         ObservableCollection<ComplexClass> complexies = new ObservableCollection<ComplexClass>();
         ObservableCollection<MPNClass> sinonims = new ObservableCollection<MPNClass>();
         ObservableCollection<MPNClass> analogs = new ObservableCollection<MPNClass>();
-        ObservableCollection<MPNClass> filters = new ObservableCollection<MPNClass>();
+        ObservableCollection<MPNClass> filters;
         ObservableCollection<MPNClass> selectedMpns = new ObservableCollection<MPNClass>();
         ObservableCollection<FormaClass> forma = new ObservableCollection<FormaClass>();
         public ObservableCollection<DrugstoreInfo> finals = new ObservableCollection<DrugstoreInfo>();
@@ -63,6 +67,21 @@ namespace CCsearch
         {
             InitializeComponent();
             selectedMpns.CollectionChanged += new NotifyCollectionChangedEventHandler(SelectedListChangeItem);
+            GetCPUNumberOfCores();
+            DebugText.Text += String.Format("Процессор: {0}\r\nКол-во физических ядер: {1}, кол-во логических ядер: {2}", CPUName, CPUCores, CPULogicalCores);
+            worker.WorkerReportsProgress = true;
+            worker.WorkerSupportsCancellation = true;
+        }
+
+        public void GetCPUNumberOfCores()
+        {
+            ManagementObjectSearcher search = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_Processor");
+            foreach( ManagementObject Obj in search.Get()) 
+            {
+                CPUCores = Convert.ToInt32(Obj["NumberOfCores"].ToString());
+                CPULogicalCores = Convert.ToInt32(Obj["NumberOfLogicalProcessors"].ToString());
+                CPUName = Obj["Name"].ToString();
+            }
         }
 
         private void SearchWindow_Initialized(object sender, EventArgs e)
@@ -75,7 +94,6 @@ namespace CCsearch
             {
                 PreloadSearch();
             }
-           
         }
 
         private void DebugMode(Action act)
@@ -97,8 +115,8 @@ namespace CCsearch
         }
         private void DebugMode(bool flag, Action act, string Label)
         {
-            lock (this)
-            {
+            //lock (this)
+            //{
                 Debug.Listeners.Add(DListener);
                 Debug.AutoFlush = true;
 
@@ -109,8 +127,8 @@ namespace CCsearch
                 DateTime EndTime = DateTime.Now;
                 TimeSpan TimeInterval = EndTime.Subtract(StartTime);
                 Debug.WriteLine(String.Format("\r\nВремя предзагрузки данных - {0}, act= {1}", TimeInterval.ToString(), Label));
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}, act= {1}", TimeInterval.ToString(), Label); }));
-            }
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}, act= {1}", TimeInterval.ToString(), Label); DebugText.ScrollToEnd(); }));
+            //}
         }
         private void DebugMode(Action act, string Label)
         {
@@ -140,50 +158,57 @@ namespace CCsearch
         {
             Analog.ItemsSource = analogs;
             Sinonim.ItemsSource = sinonims;
-            MPNList.ItemsSource = mpns;
+            /*MPNList.ItemsSource = mpns;
             MPN.ItemsSource = mpns;
             Inter.ItemsSource = inters;
             InterList.ItemsSource = inters;
             Farm.ItemsSource = farms;
             FarmList.ItemsSource = farms;
-            City.ItemsSource = cities;
+            City.ItemsSource = cities;*/
             Address.ItemsSource = complexies;
-            FilterList.ItemsSource = filters;
+            //FilterList.ItemsSource = filters;
             SelectedMPN.ItemsSource = selectedMpns;
 
             BackgroundWorker worker1 = new BackgroundWorker();
+            /*BackgroundWorker worker2 = new BackgroundWorker();
+            BackgroundWorker worker3 = new BackgroundWorker();*/
 
-            worker1.WorkerReportsProgress = true; 
+            worker1.WorkerReportsProgress = true;
+           /* worker2.WorkerReportsProgress = true;
+            worker3.WorkerReportsProgress = true;*/
 
             worker1.WorkerSupportsCancellation = true;
+           /* worker2.WorkerSupportsCancellation = true;
+            worker3.WorkerSupportsCancellation = true;*/
 
             worker1.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) { WorkEnd(sender, e); };
-
-            worker1.DoWork += delegate (object sender, DoWorkEventArgs e) 
+            /*worker2.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) { WorkEnd(sender, e); };
+            worker3.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) { WorkEnd(sender, e); };
+            */
+            worker1.DoWork += delegate(object sender, DoWorkEventArgs e)
             {
-                DebugMode(true, () => { PreloadACInter(); }, "Inter");
-                DebugMode(true, () => { PreloadACFarm(); }, "Pharm");
-                DebugMode(true, () => { PreloadACmpn(); }, "MPN");
-                DebugMode(true, () => { PreloadACCity(); }, "City");
+      
+                Parallel.Invoke(
+                    () => { DebugMode(true, () => { PreloadACFarm(); }, "Pharm"); },
+                    () => { DebugMode(true, () => { PreloadACCity(); }, "City"); },
+                    () => { DebugMode(true, () => { PreloadACmpn(); }, "MPN"); },
+                    () => { DebugMode(true, () => { PreloadACInter(); }, "Inter"); }
+                );
+     
                 
+
             };
+            //worker2.DoWork += delegate(object sender, DoWorkEventArgs e)
+            //{
+            //    DebugMode(true, () => { PreloadACmpn(); }, "MPN");
+            //}; 
+            //worker3.DoWork += delegate(object sender, DoWorkEventArgs e)
+            //{
+            //    DebugMode(true, () => { PreloadACInter(); }, "Inter");
+            //};
             worker1.RunWorkerAsync();
-            
-
-            
-            
-            
-            
-            //Thread MpnThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACmpn(); }, "MPN"); }));
-            //Thread InterThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACInter(); }, "Inter"); }));
-            //Thread FarmThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACFarm(); }, "Pharm"); }));
-            //Thread CityThread = new Thread(new ThreadStart(delegate { DebugMode(() => { PreloadACCity(); }, "City"); }));
-
-            //Dispatcher.InvokeAsync(() => { MpnThread.Start(); });
-            //Dispatcher.InvokeAsync(() => { InterThread.Start(); });
-            //Dispatcher.InvokeAsync(() => { FarmThread.Start(); });
-            //Dispatcher.InvokeAsync(() => { CityThread.Start(); });
-
+            //worker2.RunWorkerAsync();
+            //worker3.RunWorkerAsync();
         }
         private void WorkEnd(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -191,10 +216,14 @@ namespace CCsearch
                 if (e.Cancelled == true)
                 {
                     Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nЗагрузка отменена"); });
+                    LoadingWrap.Visibility = Visibility.Hidden;
+                    MainGrid.Visibility = Visibility.Visible;
                 }
                 else if (e.Error != null)
                 {
                     Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nОшибка загрузки: "); });
+                    LoadingWrap.Visibility = Visibility.Hidden;
+                    MainGrid.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -206,7 +235,6 @@ namespace CCsearch
                     }
                 }
             };
-
         }
 
         #region Preloads
@@ -214,7 +242,10 @@ namespace CCsearch
         {
             SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             UpdateProgressBarDelegate updProgress = new UpdateProgressBarDelegate(MpnBar.SetValue);
-
+            List<MPNClass> MpnList = new List<MPNClass>();
+            /*
+             * Получаем общее кол-во записей в БД для прогрессбара
+             */
             string sqlCount = "SELECT COUNT(*) as count FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i WITH(NOLOCK) ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f WITH(NOLOCK) ON f.pharmacological_group_id = mpn.pharmacological_group_id";
             int rowCount = 0;
             SqlCommand sc = new SqlCommand(sqlCount, ch_d_1_dbc);
@@ -234,6 +265,7 @@ namespace CCsearch
             {
                 double val = 0;
                 Dispatcher.Invoke(() => { MpnBar.Maximum = rowCount; });
+
                 while (data.Read())
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
@@ -244,20 +276,30 @@ namespace CCsearch
                     string farmName = data["farm_name"].ToString();
                     bool isSinonim = Convert.ToBoolean(data["is_sinonim"].ToString());
                     bool isAnalog = Convert.ToBoolean(data["is_analog"].ToString());
-                    Dispatcher.Invoke(() => { mpns.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); MpnLoadingText.Text = String.Format("{0}/{1}", val+1, rowCount); });
+                    Dispatcher.Invoke(() => { MpnList.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); MpnLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
                     Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
+                
             }
             finally
             {
+                mpns = new ObservableCollection<MPNClass>(MpnList);
+                Dispatcher.Invoke(() =>
+                {
+                    MPN.ItemsSource = mpns;
+                    MPNList.ItemsSource = mpns;
+                });
                 data.Close();
                 ch_d_1_dbc.Close();
+                
             }
         }
         private void PreloadACInter()
         {
             SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             UpdateProgressBarDelegate updProgress = new UpdateProgressBarDelegate(InterBar.SetValue);
+
+            List<InterClass> IntList = new List<InterClass>();
 
             string sqlCount = "SELECT COUNT(*) as count FROM international_name WITH (NOLOCK) WHERE in_sinonim_flag = 1 ";
             int rowCount = 0;
@@ -282,13 +324,18 @@ namespace CCsearch
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
                     string name = data["iname"].ToString();
-                    Dispatcher.Invoke(() => { inters.Add(new InterClass(id, name, true)); InterLoadingText.Text = String.Format("{0}/{1}", val+1, rowCount); });
-
+                    Dispatcher.Invoke(() => { IntList.Add(new InterClass(id, name, true)); InterLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
                     Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
             }
             finally
             {
+                inters = new ObservableCollection<InterClass>(IntList);
+                Dispatcher.Invoke(() =>
+                {
+                    Inter.ItemsSource = inters;
+                    InterList.ItemsSource = inters;
+                });
                 data.Close();
                 ch_d_1_dbc.Close();
             }
@@ -297,6 +344,8 @@ namespace CCsearch
         {
             SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             UpdateProgressBarDelegate updProgress = new UpdateProgressBarDelegate(FarmBar.SetValue);
+
+            List<FarmClass> FarList = new List<FarmClass>();
 
             string sqlCount = "SELECT COUNT(*) as count FROM pharmacological_group a WITH (NOLOCK) WHERE a.pg_analog_flag = 1 ";
             int rowCount = 0;
@@ -323,12 +372,18 @@ namespace CCsearch
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
                     string name = data["fname"].ToString();
-                    Dispatcher.Invoke(() => { farms.Add(new FarmClass(id, name, true)); FarmLoadingText.Text = String.Format("{0}/{1}", val+1, rowCount); });
+                    Dispatcher.Invoke(() => { FarList.Add(new FarmClass(id, name, true)); FarmLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
                     Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
             }
             finally
             {
+                farms = new ObservableCollection<FarmClass>(FarList);
+                Dispatcher.Invoke(() =>
+                {
+                    Farm.ItemsSource = farms;
+                    FarmList.ItemsSource = farms;
+                });
                 data.Close();
                 ch_d_1_dbc.Close();
             }
@@ -337,6 +392,8 @@ namespace CCsearch
         {
             SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             UpdateProgressBarDelegate updProgress = new UpdateProgressBarDelegate(CityBar.SetValue);
+
+            List<CityClass> CityList = new List<CityClass>();
 
             string sqlCount = "SELECT COUNT(*) as count FROM area a WITH (NOLOCK) WHERE a.area_SortCode > 0 ";
             int rowCount = 0;
@@ -361,15 +418,18 @@ namespace CCsearch
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
                     string name = data["cname"].ToString();
-                    Dispatcher.Invoke(() => { cities.Add(new CityClass(id, name)); CityLoadingText.Text = String.Format("{0}/{1}", val+1, rowCount); });
+                    Dispatcher.Invoke(() => { CityList.Add(new CityClass(id, name)); CityLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
                     Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
             }
             finally
             {
+                cities = new ObservableCollection<CityClass>(CityList);
+                Dispatcher.Invoke(() => { City.ItemsSource = cities; });
                 data.Close();
                 ch_d_1_dbc.Close();
             }
+            
         }
         private void PreloadACComplex()
         {
@@ -537,26 +597,147 @@ namespace CCsearch
         #endregion
 
         #region list events
+        private void FilterLocalTextBoxWork()
+        {
+            UpdateProgressBarDelegate updProgress = new UpdateProgressBarDelegate(CommonProgressBar.SetValue);
+            if (filters != null)
+                filters.Clear();
+
+            string FilterText = Filter.Text;
+            DebugText.Text += String.Format("\r\nтекст фильтра - \"{0}\"", FilterText);
+            DebugText.ScrollToEnd();
+            List<MPNClass> FullContains = new List<MPNClass>();
+            List<MPNClass> AllSliceContains = new List<MPNClass>();
+            List<MPNClass> SliceContains = new List<MPNClass>();
+            if (FilterText != "" && FilterText != null && FilterText.Length > 2)
+            {
+                string[] words;
+                words = FilterText.Split((string[])null, StringSplitOptions.RemoveEmptyEntries);
+                int CollectionCount = mpns.Count;
+                if (mpns.Count > 0)
+                {
+                    //Debug.WriteLine(String.Format("Работа локлаьного ФИЛЬТРА"));
+                    //DListener.WriteLine(String.Format("Работа фильтра"));
+                    Parallel.For(0, CollectionCount, (i) =>
+                    {
+                        int contains = 0;
+                        string Text = mpns[i].ToString().ToLower();
+                        if (Text.Contains(FilterText.ToLower()))
+                        {
+                            FullContains.Add(mpns[i]);
+                        }
+                        else
+                        {
+                            foreach (string word in words)
+                            {
+                                if (word.Length > 2 && Text.StartsWith(word.ToLower()))
+                                {
+                                    SliceContains.Add(mpns[i]);
+                                }
+                                if (word.Length > 2 && Text.Contains(word.ToLower()))
+                                    contains = contains + 1;
+                            }
+                            if (words.Count<string>() > 1 && contains > 0 && words.Count<string>() == contains)
+                            {
+                                AllSliceContains.Add(mpns[i]);
+                                contains = 0;
+                            }
+                        }
+                    });
+                    //for (int i = 0; i < CollectionCount; i++)
+                    //{
+                    //    string Text = mpns[i].ToString().ToLower();
+                    //    if (Text.Contains(FilterText.ToLower()))
+                    //    {
+                    //        FullContains.Add(mpns[i]);
+                    //        //filters.Add(mpns[i]);
+                    //    }
+                    //    else
+                    //    {
+                    //        foreach (string word in words)
+                    //        {
+                    //            if(word.Length > 2 && Text.Contains( word.ToLower() ) )
+                    //            {
+                    //                SliceContains.Add(mpns[i]);
+                    //                //filters.Add(mpns[i]);
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    Dispatcher.Invoke(() =>
+                    {
+                        DebugText.Text += String.Format("\r\nПолное совпадение: {0}", AllSliceContains.Count);
+                        DebugText.ScrollToEnd();
+                        filters = new ObservableCollection<MPNClass>(FullContains.Concat(AllSliceContains).ToList<MPNClass>().Concat(SliceContains).ToList<MPNClass>());
+                        FilterList.ItemsSource = filters;
+                    });
+                }
+                //FilterList.SelectedIndex = -1;
+            }
+        }
         private void FilterTextBoxWork()
         {
             filters.Clear();
-            int CollectionCount = mpns.Count;
-            if (mpns.Count > 0)
+            string FilterText = Filter.Text;
+            DebugText.Text += String.Format("\r\nтекст фильтра - \"{0}\"", FilterText);
+            DebugText.ScrollToEnd();
+            if (FilterText != "" && FilterText != null && FilterText.Length > 2)
             {
-                for (int i = 0; i < CollectionCount; i++)
+                SqlConnection ch_php = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
+                string sql = "declare @translate_lang_id int = 1 -- язык поиска \r\ndeclare @str varchar(250) = @fstr \r\ndeclare @top int = 100 -- количество возвращаемых записей \r\ndeclare @search_type int = 1 --0 ищем по xxx%, 1 ищем сначала по xxx%, а затем по %xxx% \r\ndeclare @t table( r_num int, medical_product_name_id int, medical_product_name_name varchar(250), step int, word_cnt int, error_level int, word_num int, medical_product_name_stat int ) \r\ninsert into @t exec ch_php_code.dbo.p_search_mpn_by_str @translate_lang_id, @str, @search_type, @top \r\nSELECT DISTINCT mpn.medical_product_name_name as name, t.r_num, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, 1 as is_sinonim, 1 as is_analog FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN @t t ON mpn.medical_product_name_id = t.medical_product_name_id LEFT JOIN international_name i ON i.international_name_id = mpn.international_name_id LEFT JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.translate_lang_id = @translate_lang_id AND (f.translate_lang_id = @translate_lang_id OR f.pharmacological_group_name IS NULL ) AND (i.translate_lang_id = @translate_lang_id OR i.international_name_name IS NULL) order by t.r_num";
+                SqlCommand sc = new SqlCommand(sql, ch_php);
+                sc.Parameters.AddWithValue("@fstr", FilterText);
+                ch_php.Open();
+                SqlDataReader data = sc.ExecuteReader();
+
+                try
                 {
-                    string Text = mpns[i].ToString().ToLower();
-                    if (Text.Contains(Filter.Text.ToLower()))
+                    while (data.Read())
                     {
-                        filters.Add(mpns[i]);
+                        string interName = "~";
+                        int interId = 456;
+                        int farmId = 309;
+                        string farmName = "~";
+
+
+
+                        int id = Convert.ToInt32(data["id"].ToString());
+                        string name = data["name"].ToString();
+                        if (data["inter_name"].ToString() != null && data["inter_name"].ToString() != "")
+                            interName = data["inter_name"].ToString();
+                        if (data["inter_id"].ToString() != null && data["inter_id"].ToString() != "")
+                            interId = Convert.ToInt32(data["inter_id"].ToString());
+                        if (data["farm_id"].ToString() != null && data["farm_id"].ToString() != "")
+                            farmId = Convert.ToInt32(data["farm_id"].ToString());
+                        if (data["farm_name"].ToString() != null && data["farm_name"].ToString() != "")
+                            farmName = data["farm_name"].ToString();
+                        bool isSinonim = Convert.ToBoolean(Convert.ToInt32(data["is_sinonim"].ToString()));
+                        bool isAnalog = Convert.ToBoolean(Convert.ToInt32(data["is_analog"].ToString()));
+                        Dispatcher.BeginInvoke(new ThreadStart(delegate { filters.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); }));
                     }
                 }
+                /*catch (Exception excp)
+                {
+                    MessageBox.Show(String.Format("{0}\r\n{1}", excp.Message, excp.Source));
+                }*/
+                finally
+                {
+                    ch_php.Close();
+                    data.Close();
+                }
             }
-            FilterList.SelectedIndex = 0;
         }
         private void Filter_KeyUp(object sender, KeyEventArgs e)
         {
-            DebugMode(() => { FilterTextBoxWork(); }, "Формирование листинга фильтра");
+            DebugMode(
+                true,
+                () => { 
+                    if (LocalCheck.IsChecked == true) 
+                        FilterLocalTextBoxWork(); 
+                    else 
+                        FilterTextBoxWork(); 
+                }, 
+                "Формирование листинга фильтра");
         }
         private void FilterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -636,7 +817,7 @@ namespace CCsearch
         #region local actions for list events
         private void LocalSinonimAction(InterClass SelItem)
         {
-            if (SelItem != null)
+            if (SelItem != null && SelItem.IsSinonim())
             {
                 if (inters.Count > 0)
                 {
@@ -653,7 +834,7 @@ namespace CCsearch
         }
         private void LocalAnalogsAction(FarmClass SelItem)
         {
-            if (SelItem != null)
+            if (SelItem != null && SelItem.IsAnalog())
             {
                 if (farms.Count > 0)
                 {
@@ -680,11 +861,11 @@ namespace CCsearch
                     analogs.Clear();
                     foreach (MPNClass item in mpns)
                     {
-                        if (item.GetInterID() == InterId && item.IsSinonim() == true)
+                        if (item.GetInterID() == InterId && SelItem.IsSinonim())
                         {
                             sinonims.Add(item);
                         }
-                        if (item.GetFarmID() == FarmId && item.IsAnalog() == true)
+                        if (item.GetFarmID() == FarmId && SelItem.IsAnalog())
                         {
                             analogs.Add(item);
                         }
@@ -704,66 +885,76 @@ namespace CCsearch
             int MpnId = SelItem.GetID();
             int InterId = SelItem.GetInterID();
             int FarmId = SelItem.GetFarmID();
+            
             string sql_sinonim = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, i.in_sinonim_flag as is_sinonim, f.pg_analog_flag as is_analog FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id  WHERE mpn.international_name_id = @inter  AND i.in_sinonim_flag = 1 ORDER BY mpn.medical_product_name_name ASC";
             string sql_farm_analog = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, i.in_sinonim_flag as is_sinonim, f.pg_analog_flag as is_analog  FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.pharmacological_group_id = @farm AND f.pg_analog_flag = 1 ORDER BY mpn.medical_product_name_name ASC";
-            //Sinonims
-            SqlCommand sc = new SqlCommand(sql_sinonim, ch_d_1_dbc);
-            sc.Parameters.AddWithValue("@inter", InterId);
-            ch_d_1_dbc.Open();
-            SqlDataReader data = sc.ExecuteReader();
-
-            try
+            DebugText.Text += String.Format("\r\nsinonim = \"{0}\", inter = \"{1}\"", sql_sinonim, InterId);
+            DebugText.Text += String.Format("\r\nanalog = \"{0}\", pharm = \"{1}\"", sql_farm_analog, FarmId);
+            DebugText.ScrollToEnd();    
+            if (SelItem.IsSinonim())
             {
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { sinonims.Clear(); }));
-                while (data.Read())
+                //Sinonims
+                SqlCommand sc = new SqlCommand(sql_sinonim, ch_d_1_dbc);
+                sc.Parameters.AddWithValue("@inter", InterId);
+                ch_d_1_dbc.Open();
+                SqlDataReader data = sc.ExecuteReader();
+
+                try
                 {
-                    int id = Convert.ToInt32(data["id"].ToString());
-                    string name = data["name"].ToString();
-                    string interName = data["inter_name"].ToString();
-                    int interId = Convert.ToInt32(data["inter_id"].ToString());
-                    int farmId = Convert.ToInt32(data["farm_id"].ToString());
-                    string farmName = data["farm_name"].ToString();
-                    bool isSinonim = Convert.ToBoolean(data["is_sinonim"].ToString());
-                    bool isAnalog = Convert.ToBoolean(data["is_analog"].ToString());
-                    Dispatcher.BeginInvoke(new ThreadStart(delegate { sinonims.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); }));
+                    Dispatcher.BeginInvoke(new ThreadStart(delegate { sinonims.Clear(); }));
+                    while (data.Read())
+                    {
+                        int id = Convert.ToInt32(data["id"].ToString());
+                        string name = data["name"].ToString();
+                        string interName = data["inter_name"].ToString();
+                        int interId = Convert.ToInt32(data["inter_id"].ToString());
+                        int farmId = Convert.ToInt32(data["farm_id"].ToString());
+                        string farmName = data["farm_name"].ToString();
+                        bool isSinonim = Convert.ToBoolean(data["is_sinonim"].ToString());
+                        bool isAnalog = Convert.ToBoolean(data["is_analog"].ToString());
+                        Dispatcher.BeginInvoke(new ThreadStart(delegate { sinonims.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); }));
+                    }
+                }
+                finally
+                {
+                    ch_d_1_dbc.Close();
+                    data.Close();
                 }
             }
-            finally
+            if (SelItem.IsAnalog())
             {
-                ch_d_1_dbc.Close();
-                data.Close();
-            }
-            //Analogs
-            SqlCommand sc_a = new SqlCommand(sql_farm_analog, ch_d_1_dbc);
-            sc_a.Parameters.AddWithValue("@farm", FarmId);
-            ch_d_1_dbc.Open();
-            SqlDataReader data_a = sc_a.ExecuteReader();
+                //Analogs
+                SqlCommand sc_a = new SqlCommand(sql_farm_analog, ch_d_1_dbc);
+                sc_a.Parameters.AddWithValue("@farm", FarmId);
+                ch_d_1_dbc.Open();
+                SqlDataReader data_a = sc_a.ExecuteReader();
 
-            try
-            {
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { analogs.Clear(); }));
-                while (data_a.Read())
+                try
                 {
-                    int id = Convert.ToInt32(data_a["id"].ToString());
-                    string name = data_a["name"].ToString();
-                    string interName = data_a["inter_name"].ToString();
-                    int interId = Convert.ToInt32(data_a["inter_id"].ToString());
-                    int farmId = Convert.ToInt32(data_a["farm_id"].ToString());
-                    string farmName = data_a["farm_name"].ToString();
-                    bool isSinonim = Convert.ToBoolean(data_a["is_sinonim"].ToString());
-                    bool isAnalog = Convert.ToBoolean(data_a["is_analog"].ToString());
-                    Dispatcher.BeginInvoke(new ThreadStart(delegate { analogs.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); }));
+                    Dispatcher.BeginInvoke(new ThreadStart(delegate { analogs.Clear(); }));
+                    while (data_a.Read())
+                    {
+                        int id = Convert.ToInt32(data_a["id"].ToString());
+                        string name = data_a["name"].ToString();
+                        string interName = data_a["inter_name"].ToString();
+                        int interId = Convert.ToInt32(data_a["inter_id"].ToString());
+                        int farmId = Convert.ToInt32(data_a["farm_id"].ToString());
+                        string farmName = data_a["farm_name"].ToString();
+                        bool isSinonim = Convert.ToBoolean(data_a["is_sinonim"].ToString());
+                        bool isAnalog = Convert.ToBoolean(data_a["is_analog"].ToString());
+                        Dispatcher.BeginInvoke(new ThreadStart(delegate { analogs.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); }));
+                    }
                 }
-            }
-            finally
-            {
-                ch_d_1_dbc.Dispose();
-                data_a.Close();
+                finally
+                {
+                    ch_d_1_dbc.Dispose();
+                    data_a.Close();
+                }
             }
         }
         public void SinonimsAction(InterClass Inter)
         {
-            if (Inter != null)
+            if (Inter != null && Inter.IsSinonim())
             {
                 SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
                 string sql_sinonim = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, i.in_sinonim_flag as is_sinonim, f.pg_analog_flag as is_analog   FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id  WHERE mpn.international_name_id = @inter  AND i.in_sinonim_flag = 1 ORDER BY mpn.medical_product_name_name ASC";
@@ -797,7 +988,7 @@ namespace CCsearch
         }
         public void AnalogsAction(FarmClass Pharm)
         {
-            if (Pharm != null)
+            if (Pharm != null && Pharm.IsAnalog())
             {
                 SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
                 string sql_farm_analog = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, i.in_sinonim_flag as is_sinonim, f.pg_analog_flag as is_analog    FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.pharmacological_group_id = @farm AND f.pg_analog_flag = 1 ORDER BY mpn.medical_product_name_name ASC";
@@ -953,17 +1144,21 @@ namespace CCsearch
             MPNList.SelectedIndex = -1;
             InterList.SelectedIndex = -1;
             FarmList.SelectedIndex = -1;
+            Address.SelectedIndex = -1;
+            City.SelectedIndex = -1;
+            MainTabs.SelectedIndex = ListPage;
+            SelectedMPNSwitcher.Content = "Выбранные позиции (0)";
+            Filter.Text = "";
+            
             formas.Clear();
             mps.Clear();
             selectedMpns.Clear();
-            SelectedMPNSwitcher.Content = "Выбранные позиции (0)";
-            MainTabs.SelectedIndex = ListPage;
             sinonims.Clear();
             analogs.Clear();
-            filters.Clear();
-            Filter.Text = "";
-            Address.SelectedIndex = -1;
-            City.SelectedIndex = -1;
+            if(filters != null)
+                filters.Clear();
+            
+            
         }
 
         private void AddMpn_Click(object sender, RoutedEventArgs e)
@@ -1145,31 +1340,6 @@ namespace CCsearch
         {
             UserId = User;
         }
-        //private void DynamicControl_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Button testButton = new Button();
-        //    int count = TestDynamicArea.Children.Count;
-        //    testButton.Content = String.Format("Йа кнопко {0}!", ++count);
-        //    testButton.Name = String.Format("Button{0}", count);
-        //    testButton.Style = (Style)this.Resources["RulledButtons"];
-        //    TestDynamicArea.Children.Add(testButton);
-        //}
-
-        //private void TestGetButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    int index = Convert.ToInt32(TestIndexButton.Text);
-        //    Button gettedBut = (Button)TestDynamicArea.Children[index];
-        //    MessageBox.Show(gettedBut.Name);
-        //}
-
-        //private void TestRemoveItem_Click(object sender, RoutedEventArgs e)
-        //{
-        //    TestDynamicArea.Children.Remove(TestDynamicArea.Children[1]);
-        //}
-        
-
-        
-
     }
 
     

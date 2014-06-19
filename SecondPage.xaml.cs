@@ -286,15 +286,14 @@ namespace CCsearch
                 if (GetFinalInfo(genericSql, 0))
                 {
                     Final.FinalGrid.ItemsSource = Main.finals;
+                    Main.MainTabs.SelectedIndex = MainWindow.FinalPage;
                 }
                 else
                 {
                     MessageBox.Show("Результаты по выбранному городу не найдены. Попробуйте найти во всех городах.");
+                    Main.MainTabs.SelectedIndex = MainWindow.FormaPage;
                 }
-                /*Dispatcher.Invoke(
-                    () => { Main.DebugText.Text += String.Format("\r\n Запрос - {0}", ); }
-                    );*/
-                Main.MainTabs.SelectedIndex = MainWindow.FinalPage;
+                
             }
             else
             {
@@ -302,6 +301,33 @@ namespace CCsearch
                 Main.Address.Focus();
             }
         }
+
+        private void DdAllSearch_Click(object sender, RoutedEventArgs e)
+        {
+            if (Main.City.SelectedItem != null && Main.Address.SelectedItem != null)
+            {
+                FinalPage Final = new FinalPage(this.Main);
+                Main.FinalTab.Content = Final;
+                string genericSql = GenerateMpSqlTable();
+                if (GetFinalInfo(genericSql, 1))
+                {
+                    Final.FinalGrid.ItemsSource = Main.finals;
+                    Main.MainTabs.SelectedIndex = MainWindow.FinalPage;
+                }
+                else
+                {
+                    MessageBox.Show("Результаты по такому запросу в базе не найдены во всех городах. Поменяйте запрос и попробуйте снова");
+                    Main.MainTabs.SelectedIndex = MainWindow.FormaPage;
+                }
+                
+            }
+            else
+            {
+                MessageBox.Show("Не выбран адрес клиента!");
+                Main.Address.Focus();
+            }
+        }
+
         /*
          *TODO Передача в функцию ID фирмы (от управляющей програмы) 
          */
@@ -659,28 +685,34 @@ namespace CCsearch
             try
             {
                 int index = 0;
-                while (data.Read())
+                if (data.HasRows)
                 {
-                    IDataRecord DataRecord = (IDataRecord)data;
-                    DrugstoreInfo DD = new DrugstoreInfo(DataRecord);
-                    DD.Index = index;
-                    index++;
-                    Main.finals.Add(DD);
+                    while (data.Read())
+                    {
+                        IDataRecord DataRecord = (IDataRecord)data;
+                        DrugstoreInfo DD = new DrugstoreInfo(DataRecord);
+                        DD.Index = index;
+                        index++;
+                        Main.finals.Add(DD);
+                    }
+                }
+                else
+                {
+                    return false;
                 }
 
             }
-            /*catch (Exception except)
+            catch (Exception except)
             {
                 MessageBox.Show("ERROR! " + except.Message.ToString() + except.Source.ToString() + except.TargetSite.ToString());
                 return false;
-            }*/
+            }
             finally
             {
                 ch_d_1_dbc.Dispose();
                 data.Close();    
             }
             return true;
-            //return sql;
         }
 
         protected string GenerateMpSqlTable()
@@ -719,8 +751,8 @@ namespace CCsearch
             switch (e.Key)
             {
                 case Key.Space:
-                    Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
-                    Main.DebugText.ScrollToEnd();
+                    //Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
+                    //Main.DebugText.ScrollToEnd();
                     if (LV.SelectedItem is FormaClass)
                     {
                         FormaClass Item = (FormaClass)LV.SelectedItem;
@@ -741,8 +773,8 @@ namespace CCsearch
             switch (e.Key)
             {
                 case Key.Space:
-                    Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
-                    Main.DebugText.ScrollToEnd();
+                    //Main.DebugText.Text += String.Format("\r\nиндекс - {0}", LV.SelectedIndex);
+                    //Main.DebugText.ScrollToEnd();
                     if (LV.SelectedItem is MpClass)
                     {
                         MpClass Item = (MpClass)LV.SelectedItem;
@@ -763,8 +795,8 @@ namespace CCsearch
             ListView LV = (ListView)sender;
             LV.SelectedIndex = MpRowIndex;
             MpGrid.SelectedIndex = MpRowIndex;
-            Main.DebugText.Text += String.Format("\r\nmp index - {0}, sel index - {1}", this.MpRowIndex, LV.SelectedIndex);
-            Main.DebugText.ScrollToEnd();
+            //Main.DebugText.Text += String.Format("\r\nmp index - {0}, sel index - {1}", this.MpRowIndex, LV.SelectedIndex);
+            //Main.DebugText.ScrollToEnd();
         }
 
         private void MpGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
