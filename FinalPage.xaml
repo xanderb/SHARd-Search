@@ -21,7 +21,7 @@
             <RowDefinition Height="33"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <ListView Name="FinalGrid" HorizontalAlignment="Stretch" Margin="10,10,10,0" Grid.Row="2" VerticalAlignment="Stretch" Grid.ColumnSpan="2" ItemContainerStyle="{StaticResource UserMouseDC}" PreviewKeyUp="Lists_SpaceKeyUp" >
+        <ListView Name="FinalGrid" HorizontalAlignment="Stretch" Margin="10,0,10,0" Grid.Row="2" VerticalAlignment="Stretch" Grid.ColumnSpan="2" ItemContainerStyle="{StaticResource UserMouseDC}" PreviewKeyUp="Lists_SpaceKeyUp" >
             <ListView.View>
                 <GridView>
                     <GridView.Columns>
@@ -85,15 +85,13 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        
-        <Button x:Name="SimpleAnswerButton" Content="Ответ голосом" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Stretch" Padding="3" Click="SimpleAnswerButton_Click"  Width="100"/>
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="30" Margin="0" Grid.Row="1" >
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,5,0,5" Grid.Row="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="FilterSubmit" Content="Применить фильтр" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Top"  Padding="5" Height="31" Grid.Column="1"/>
-            <TextBox x:Name="FilterText" HorizontalAlignment="Stretch" Height="31" Margin="11,0,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Padding="5" FontSize="14"  />
+            <Button x:Name="FilterSubmit" Content="Применить фильтр" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Grid.Column="1"/>
+            <TextBox x:Name="FilterText" HorizontalAlignment="Stretch" Margin="11,0,10,0" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="14"  />
         </Grid>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" Grid.Row="0" >
             <Grid.ColumnDefinitions>
@@ -106,5 +104,17 @@
             <Button Content="Наличие и дистанция" HorizontalAlignment="Stretch" Margin="2, 0, 2, 0" VerticalAlignment="Stretch" Padding="3" Grid.Column="1"/>
             <Button Content="Дата" HorizontalAlignment="Stretch" Margin="2, 0, 2, 0" VerticalAlignment="Stretch" Padding="3"  Grid.Column="2" />
         </Grid>
+        <Grid Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="0" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="SimpleAnswerButton" Content="Ответ голосом" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="SimpleAnswerButton_Click" />
+            <Button x:Name="AutoAnswerButton" Content="На автоответ" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="AutoAnswerButton_Click"/>
         </Grid>
+    </Grid>
 </UserControl>

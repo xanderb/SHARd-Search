@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+using System.Data;
 
 
 namespace CCsearch
@@ -36,7 +37,7 @@ namespace CCsearch
         private int CPULogicalCores;
         private string CPUName;
 
-        #region lists
+        #region Collections
         //ObservableCollection<MPNClass> mpns = new ObservableCollection<MPNClass>();
         //ObservableCollection<InterClass> inters = new ObservableCollection<InterClass>();
         //ObservableCollection<FarmClass> farms = new ObservableCollection<FarmClass>();
@@ -61,6 +62,8 @@ namespace CCsearch
         public ObservableCollection<DrugstoreInfo> finals = new ObservableCollection<DrugstoreInfo>();
         public Dictionary<int, ObservableCollection<FormaClass>> formas = new Dictionary<int, ObservableCollection<FormaClass>>();
         public Dictionary<int, ObservableCollection<MpClass>> mps = new Dictionary<int, ObservableCollection<MpClass>>();
+        DataSet CommonData = new DataSet("ch_d_1");
+        DataTable MPN_DT; 
         #endregion
 
         public MainWindow()
@@ -71,6 +74,33 @@ namespace CCsearch
             DebugText.Text += String.Format("Процессор: {0}\r\nКол-во физических ядер: {1}, кол-во логических ядер: {2}", CPUName, CPUCores, CPULogicalCores);
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
+            MPN_DT = CommonData.Tables.Add("MPN");
+            if (CPUCores > 1)
+            {
+                MPN_DT.RowChanged += new DataRowChangeEventHandler(MPN_DT_RowChanged);
+            }
+            if (CPUCores < 2)
+            {
+                MpnBar.IsIndeterminate = true;
+                InterBar.IsIndeterminate = true;
+                FarmBar.IsIndeterminate = true;
+                CityBar.IsIndeterminate = true;
+                InterLoadingText.Visibility = Visibility.Hidden;
+                MpnLoadingText.Visibility = Visibility.Hidden;
+                FarmLoadingText.Visibility = Visibility.Hidden;
+                CityLoadingText.Visibility = Visibility.Hidden;
+            }
+        }
+
+        void MPN_DT_RowChanged(object sender, DataRowChangeEventArgs e)
+        {
+            Dispatcher.Invoke(() => {
+                if (this.MpnBar.Value <= MPN_DT.Rows.Count - 1)
+                {
+                    this.MpnBar.Value++;
+                    this.MpnLoadingText.Text = String.Format("{0} / {1}", MPN_DT.Rows.Count - 1, MpnBar.Maximum);
+                }
+            });
         }
 
         public void GetCPUNumberOfCores()
@@ -110,7 +140,7 @@ namespace CCsearch
                 DateTime EndTime = DateTime.Now;
                 TimeSpan TimeInterval = EndTime.Subtract(StartTime);
                 Debug.WriteLine(String.Format("Время предзагрузки данных - {0}", TimeInterval.ToString()));
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}", TimeInterval.ToString() ); }));
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}", TimeInterval.ToString()); DebugText.ScrollToEnd(); }));
             }
         }
         private void DebugMode(bool flag, Action act, string Label)
@@ -144,7 +174,7 @@ namespace CCsearch
                 DateTime EndTime = DateTime.Now;
                 TimeSpan TimeInterval = EndTime.Subtract(StartTime);
                 Debug.WriteLine(String.Format("\r\nВремя предзагрузки данных - {0}, act= {1}", TimeInterval.ToString(), Label));
-                Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}, act= {1}", TimeInterval.ToString(), Label); }));
+                Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}, act= {1}", TimeInterval.ToString(), Label); DebugText.ScrollToEnd(); }));
             }
         }
 
@@ -228,11 +258,11 @@ namespace CCsearch
                 else
                 {
                     Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nУспешно загружено"); });
-                    if (InterBar.Value == InterBar.Maximum && FarmBar.Value == FarmBar.Maximum && MpnBar.Value == MpnBar.Maximum && CityBar.Value == CityBar.Maximum)
-                    {
+                    /*if (InterBar.Value == InterBar.Maximum && FarmBar.Value == FarmBar.Maximum && MpnBar.Value == MpnBar.Maximum && CityBar.Value == CityBar.Maximum)
+                    {*/
                         LoadingWrap.Visibility = Visibility.Hidden;
                         MainGrid.Visibility = Visibility.Visible;
-                    }
+                    //}
                 }
             };
         }
@@ -246,7 +276,7 @@ namespace CCsearch
             /*
              * Получаем общее кол-во записей в БД для прогрессбара
              */
-            string sqlCount = "SELECT COUNT(*) as count FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i WITH(NOLOCK) ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f WITH(NOLOCK) ON f.pharmacological_group_id = mpn.pharmacological_group_id";
+            string sqlCount = "SELECT COUNT(*) as count FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i WITH(NOLOCK) ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f WITH(NOLOCK) ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.mpn_PriceOff_Flag = 0";
             int rowCount = 0;
             SqlCommand sc = new SqlCommand(sqlCount, ch_d_1_dbc);
             ch_d_1_dbc.Open();
@@ -257,9 +287,11 @@ namespace CCsearch
             ch_d_1_dbc.Close();
 
 
-            string sql = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, i.in_sinonim_flag as is_sinonim, f.pg_analog_flag as is_analog FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i WITH(NOLOCK) ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f WITH(NOLOCK) ON f.pharmacological_group_id = mpn.pharmacological_group_id ORDER BY name";
+            string sql = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, i.in_sinonim_flag as is_sinonim, f.pg_analog_flag as is_analog FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i WITH(NOLOCK) ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f WITH(NOLOCK) ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.mpn_PriceOff_Flag = 0 ORDER BY name";
             sc = new SqlCommand(sql, ch_d_1_dbc);
             ch_d_1_dbc.Open();
+            //SqlDataAdapter mpnData = new SqlDataAdapter(sc);
+            
             data = sc.ExecuteReader();
             try
             {
@@ -276,10 +308,15 @@ namespace CCsearch
                     string farmName = data["farm_name"].ToString();
                     bool isSinonim = Convert.ToBoolean(data["is_sinonim"].ToString());
                     bool isAnalog = Convert.ToBoolean(data["is_analog"].ToString());
-                    Dispatcher.Invoke(() => { MpnList.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog)); MpnLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
-                    Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
+                    Dispatcher.Invoke(() => { 
+                        MpnList.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog));
+                        if (CPUCores > 1)
+                            MpnLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); 
+                    });
+                    if (CPUCores > 1)
+                        Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
-                
+                //mpnData.Fill(MPN_DT);
             }
             finally
             {
@@ -288,7 +325,17 @@ namespace CCsearch
                 {
                     MPN.ItemsSource = mpns;
                     MPNList.ItemsSource = mpns;
+                    if (CPUCores < 2)
+                    {
+                        MpnBar.Value = MpnBar.Maximum;
+                        MpnBar.IsIndeterminate = false;
+                    }
                 });
+                /*Dispatcher.Invoke(() =>
+                {
+                    MPN.ItemsSource = CommonData.Tables["MPN"].DefaultView;
+                    MPNList.ItemsSource = CommonData.Tables["MPN"].DefaultView;
+                });*/
                 data.Close();
                 ch_d_1_dbc.Close();
                 
@@ -324,8 +371,13 @@ namespace CCsearch
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
                     string name = data["iname"].ToString();
-                    Dispatcher.Invoke(() => { IntList.Add(new InterClass(id, name, true)); InterLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
-                    Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
+                    Dispatcher.Invoke(() => { 
+                        IntList.Add(new InterClass(id, name, true));
+                        if (CPUCores > 1)
+                            InterLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); 
+                    });
+                    if (CPUCores > 1)
+                        Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
             }
             finally
@@ -335,6 +387,11 @@ namespace CCsearch
                 {
                     Inter.ItemsSource = inters;
                     InterList.ItemsSource = inters;
+                    if (CPUCores < 2)
+                    {
+                        InterBar.Value = InterBar.Maximum;
+                        InterBar.IsIndeterminate = false;
+                    }
                 });
                 data.Close();
                 ch_d_1_dbc.Close();
@@ -372,8 +429,13 @@ namespace CCsearch
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
                     string name = data["fname"].ToString();
-                    Dispatcher.Invoke(() => { FarList.Add(new FarmClass(id, name, true)); FarmLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
-                    Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
+                    Dispatcher.Invoke(() => { 
+                        FarList.Add(new FarmClass(id, name, true));
+                        if (CPUCores > 1)
+                            FarmLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); 
+                    });
+                    if (CPUCores > 1)
+                        Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
             }
             finally
@@ -383,6 +445,11 @@ namespace CCsearch
                 {
                     Farm.ItemsSource = farms;
                     FarmList.ItemsSource = farms;
+                    if (CPUCores < 2)
+                    {
+                        FarmBar.Value = FarmBar.Maximum;
+                        FarmBar.IsIndeterminate = false;
+                    }
                 });
                 data.Close();
                 ch_d_1_dbc.Close();
@@ -418,14 +485,26 @@ namespace CCsearch
                 {
                     int id = Convert.ToInt32(data["id"].ToString());
                     string name = data["cname"].ToString();
-                    Dispatcher.Invoke(() => { CityList.Add(new CityClass(id, name)); CityLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); });
-                    Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
+                    Dispatcher.Invoke(() => { 
+                        CityList.Add(new CityClass(id, name));
+                        if (CPUCores > 1)
+                            CityLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); 
+                    });
+                    if (CPUCores > 1)
+                        Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
                 }
             }
             finally
             {
                 cities = new ObservableCollection<CityClass>(CityList);
-                Dispatcher.Invoke(() => { City.ItemsSource = cities; });
+                Dispatcher.Invoke(() => { 
+                    City.ItemsSource = cities;
+                    if (CPUCores < 2)
+                    {
+                        CityBar.IsIndeterminate = false;
+                        CityBar.Value = CityBar.Maximum;
+                    }
+                });
                 data.Close();
                 ch_d_1_dbc.Close();
             }
@@ -599,7 +678,6 @@ namespace CCsearch
         #region list events
         private void FilterLocalTextBoxWork()
         {
-            UpdateProgressBarDelegate updProgress = new UpdateProgressBarDelegate(CommonProgressBar.SetValue);
             if (filters != null)
                 filters.Clear();
 
@@ -1327,7 +1405,10 @@ namespace CCsearch
                     TabItem Tab = (TabItem)TI;
                     int tag = Convert.ToInt32(Tab.Tag.ToString());
                     if (tag == index)
+                    {
                         Tab.IsSelected = true;
+                        SelectedMPN.Visibility = Visibility.Hidden;
+                    }
                 }
             }
         }
@@ -1339,6 +1420,17 @@ namespace CCsearch
         public void SetUserId(int User)
         {
             UserId = User;
+        }
+
+        //Тестовая реализация обработчика события автоответа
+        public void testAutoAnswerMessage(List<int> Ids)
+        {
+            string sumIds = "";
+            foreach(int id in Ids)
+            {
+                sumIds += "\r\n" + id.ToString();
+            }
+            MessageBox.Show(String.Format("обработано событие автоответа. переданные ID аптек: {0}", sumIds));
         }
     }
 

@@ -22,6 +22,10 @@ namespace CCsearch
     public partial class FinalPage : UserControl
     {
         public MainWindow Main { get; set; }
+        public delegate void AutoAnswerDelegate(List<int> DrugstoreIds); //делегат для события автоответа со списком ID выбранных аптек
+
+        public event AutoAnswerDelegate onAutoAnswer; //событие автоответа
+
         public FinalPage()
         {
             InitializeComponent();
@@ -72,6 +76,23 @@ namespace CCsearch
                     break;
                 
             }
+        }
+
+        private void AutoAnswerButton_Click(object sender, RoutedEventArgs e)
+        {
+            //Сбор данных и инициализация события автоответа
+            List<int> DrugstoreIds = new List<int>();
+            foreach (DrugstoreInfo final in Main.finals)
+            {
+                if (final.Selected == true)
+                {
+                    if (DrugstoreIds.IndexOf(final.DDId) < 0)
+                    {
+                        DrugstoreIds.Add(final.DDId);
+                    }
+                }
+            }
+            onAutoAnswer(DrugstoreIds);
         }
     }
 }

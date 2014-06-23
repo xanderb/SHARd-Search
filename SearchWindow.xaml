@@ -274,15 +274,23 @@
                 </TabItem>
             </TabControl>
             <Label Content="Информация" Grid.Column="2" HorizontalAlignment="Left" Margin="10,-1,0,0" VerticalAlignment="Top" Width="218"/>
-            <CheckBox x:Name="LocalCheck" Content="Локальный режим" Grid.Column="2" Margin="9,0,11,0" IsChecked="True" Grid.Row="1" BorderThickness="1" VerticalAlignment="Top"/>
-            <Button x:Name="ClearAll" Content="Очистить форму" HorizontalAlignment="Left" Margin="138,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}" Click="ClearAll_Click" />
-            <Button x:Name="SelectedMPNSwitcher" Content="Выбранные позиции (0)" HorizontalAlignment="Left" Margin="242,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource InfoButtons}" Click="SelectedMPNSwitcher_Click"/>
-            <Button Content="Далее>>" HorizontalAlignment="Left" Margin="387,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Click="NextButton_Click" Style="{StaticResource RulledButtons}" Name="NextButton"/>
-            <Button Content="&lt;&lt;Назад" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}" Name="BackButton" IsEnabled="False" Click="BackButton_Click" />
-            <ListBox x:Name="SelectedMPN" Height="300" VerticalAlignment="Top" Margin="0,40,0,0" Grid.Row="1" Grid.RowSpan="2" Panel.ZIndex="5" Width="300" Visibility="Hidden" SelectionChanged="SelectedMPN_SelectionChanged"  />
-            <Button Content="Добавить" HorizontalAlignment="Left" Margin="72,10,0,0" Grid.Row="1" VerticalAlignment="Top" Style="{StaticResource RulledButtons}" Height="30" Click="AddMpn_Click" Name="AddMpn"/>
-            <ProgressBar x:Name="CommonProgressBar" Grid.Column="2" HorizontalAlignment="Stretch" Height="10" Grid.Row="2" VerticalAlignment="Top" Margin="10,0,10,0" />
-            <TextBlock x:Name="CommonProgressText" TextWrapping="Wrap" Grid.Column="2" Text="" Margin="10,10,10,0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="15" TextAlignment="Center"/>
+            <CheckBox x:Name="LocalCheck" Content="Локальный режим" Grid.Column="2" Margin="10,5,10,0" IsChecked="True" Grid.Row="1" BorderThickness="1" VerticalAlignment="Top"/>
+            <CheckBox x:Name="DataSet" Content="Локальная база данных" Grid.Column="2" HorizontalAlignment="Stretch" Margin="10,20,10,0" Grid.Row="1" VerticalAlignment="Top" Width="Auto"/>
+            <ListBox x:Name="SelectedMPN" Height="300" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,40,0,0" Width="300" Visibility="Hidden" SelectionChanged="SelectedMPN_SelectionChanged" Panel.ZIndex="5" Grid.Row="1" Grid.RowSpan="2"  />
+            <Grid Name="MainSearchButtons" HorizontalAlignment="Stretch" Height="50" Margin="10" Grid.Row="1" VerticalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="61px"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="62px"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="ClearAll" Content="Очистить форму" HorizontalAlignment="Stretch" Grid.Column="2" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}" Click="ClearAll_Click" />
+                <Button x:Name="SelectedMPNSwitcher" Content="Выбранные позиции (0)" HorizontalAlignment="Stretch" Grid.Column="3" VerticalAlignment="Top" Height="30" Style="{StaticResource InfoButtons}" Click="SelectedMPNSwitcher_Click"/>
+                <Button Content="Далее>>" HorizontalAlignment="Stretch" Grid.Column="4" VerticalAlignment="Top" Height="30" Click="NextButton_Click" Style="{StaticResource RulledButtons}" Name="NextButton"/>
+                <Button Content="&lt;&lt;Назад" HorizontalAlignment="Stretch" Grid.Column="0" VerticalAlignment="Top" Height="30" Style="{StaticResource RulledButtons}" Name="BackButton" IsEnabled="False" Click="BackButton_Click" />
+                <Button Content="Добавить" HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource RulledButtons}" Height="30" Click="AddMpn_Click" Name="AddMpn"/>
+            </Grid>
         </Grid>
     </Grid>
 

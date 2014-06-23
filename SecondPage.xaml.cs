@@ -287,6 +287,7 @@ namespace CCsearch
                 {
                     Final.FinalGrid.ItemsSource = Main.finals;
                     Main.MainTabs.SelectedIndex = MainWindow.FinalPage;
+                    Final.onAutoAnswer += Main.testAutoAnswerMessage; //Подписка на событие автоответа 
                 }
                 else
                 {
@@ -313,6 +314,7 @@ namespace CCsearch
                 {
                     Final.FinalGrid.ItemsSource = Main.finals;
                     Main.MainTabs.SelectedIndex = MainWindow.FinalPage;
+                    Final.onAutoAnswer += Main.testAutoAnswerMessage; //подписка на событие автоответа
                 }
                 else
                 {
