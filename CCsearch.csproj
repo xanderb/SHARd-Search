@@ -7,7 +7,7 @@
     <ProjectGuid>{50A3A142-B938-4278-9B28-4CE59DD4713A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CCsearch</RootNamespace>
+    <RootNamespace>SHARd.Search</RootNamespace>
     <AssemblyName>CCsearch</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

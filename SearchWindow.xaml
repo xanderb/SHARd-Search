@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     x:Name="SearchWindow" 
-    x:Class="CCsearch.MainWindow" 
-    xmlns:UserControl="clr-namespace:CCsearch"
+    x:Class="SHARd.Search.SearchMainWindow" 
+    xmlns:UserControl="clr-namespace:SHARd.Search"
     Title="Поиск Call Центр Справмедика" 
     Width="1200" 
     Height="600" 
@@ -239,7 +239,13 @@
                             <ColumnDefinition Width="3*"/>
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
-                        <ListBox x:Name="MPNList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="MPNList_SelectionChanged" MouseDoubleClick="MPNList_MouseDoubleClick" />
+                        <ListBox x:Name="MPNList" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionChanged="MPNList_SelectionChanged" MouseDoubleClick="MPNList_MouseDoubleClick">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel IsEnabled="True" />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                        </ListBox>
                         <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" x:Name="BorderMPN">
                             <Label HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="9,0,11,0" Width="Auto" Content="Торговое Наименование" />
                         </Border>
@@ -253,7 +259,7 @@
                         <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="1" >
                             <Label Content="Синоним" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
                         </Border>
-                        <ListBox x:Name="Analog" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="2" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="Analog_MouseDoubleClick" SelectionChanged="Analog_SelectionChanged"  />
+                        <ListBox x:Name="Analog" Margin="10,30,10,10" Width="Auto" Height="Auto" Grid.Column="2" ScrollViewer.VerticalScrollBarVisibility="Visible" MouseDoubleClick="Analog_MouseDoubleClick" SelectionChanged="Analog_SelectionChanged" />
                         <Border HorizontalAlignment="Stretch" Height="30" Margin="10,0" VerticalAlignment="Top" Width="Auto" Style="{StaticResource ListHead}" Grid.Column="2" >
                             <Label Content="Фармакологический аналог" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,0,10,0" Width="Auto" />
                         </Border>

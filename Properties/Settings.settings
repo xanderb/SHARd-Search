@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CCsearch.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="SHARd.Search.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="ch_d_1ConnectionString" Type="(Connection string)" Scope="Application">
@@ -19,6 +19,13 @@
     </Setting>
     <Setting Name="IsDebug" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="commonConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=db1.it-park.smed;Initial Catalog=common;Persist Security Info=True;User ID=sa;Password=903&lt;/ConnectionString&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=db1.it-park.smed;Initial Catalog=common;Persist Security Info=True;User ID=sa;Password=903</Value>
     </Setting>
   </Settings>
 </SettingsFile>

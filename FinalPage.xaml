@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="CCsearch.FinalPage"
+﻿<UserControl x:Class="SHARd.Search.FinalPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:Parent="CCsearch"
+             xmlns:Parent="SHARd.Search"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="1000">
     <UserControl.Resources>
@@ -115,6 +115,7 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="SimpleAnswerButton" Content="Ответ голосом" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="SimpleAnswerButton_Click" />
             <Button x:Name="AutoAnswerButton" Content="На автоответ" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="AutoAnswerButton_Click"/>
+            <Button x:Name="AddInfoButton" Content="Доп. информация" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="AddInfoButton_Click"/>
         </Grid>
     </Grid>
 </UserControl>

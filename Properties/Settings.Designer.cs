@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CCsearch.Properties {
+namespace SHARd.Search.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -51,6 +51,17 @@ namespace CCsearch.Properties {
         public bool IsDebug {
             get {
                 return ((bool)(this["IsDebug"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=db1.it-park.smed;Initial Catalog=common;Persist Security Info=True;Us" +
+            "er ID=sa;Password=903")]
+        public string commonConnectionString {
+            get {
+                return ((string)(this["commonConnectionString"]));
             }
         }
     }

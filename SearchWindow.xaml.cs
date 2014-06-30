@@ -15,22 +15,30 @@ using System.Linq;
 using System.Data;
 
 
-namespace CCsearch
+namespace SHARd.Search
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для SearchMainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class SearchMainWindow : Window
     {
         public const int ListPage = 0;
         public const int FormaPage = 1;
         public const int FinalPage = 2;
+        public const int LoadingStep = 100;
+        public const int LoadingStepBig = 1000;
         //SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
         //SqlConnection ch_php_dbc = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
-        TextWriterTraceListener DListener = new TextWriterTraceListener(@"d:\work\LOGS\debugCCSearch.txt");
+        TextWriterTraceListener DListener = new TextWriterTraceListener(@"d:\work\LOGS\debugSHARd.Search.txt");
         private BackgroundWorker worker = new BackgroundWorker();
         delegate void UpdateProgressBarDelegate(DependencyProperty dp, object value);
+        public delegate void AutoAnswerDelegate(List<int> DrugstoreIds); //делегат для события автоответа со списком ID выбранных аптек
 
+        public event AutoAnswerDelegate onAutoAnswer; //событие автоответа
+        //Не используются. Работа над задержкой ввода данных в текстовые поля
+        private int inAction = 0;
+        private int DelayTime = 200;
+        //******************************************************************//
         public int FirmId = 0;
         public int UserId = 713;
         private int CPUCores;
@@ -66,7 +74,7 @@ namespace CCsearch
         DataTable MPN_DT; 
         #endregion
 
-        public MainWindow()
+        public SearchMainWindow()
         {
             InitializeComponent();
             selectedMpns.CollectionChanged += new NotifyCollectionChangedEventHandler(SelectedListChangeItem);
@@ -296,6 +304,7 @@ namespace CCsearch
             try
             {
                 double val = 0;
+                int loadingInterval = 0;
                 Dispatcher.Invoke(() => { MpnBar.Maximum = rowCount; });
 
                 while (data.Read())
@@ -309,12 +318,19 @@ namespace CCsearch
                     bool isSinonim = Convert.ToBoolean(data["is_sinonim"].ToString());
                     bool isAnalog = Convert.ToBoolean(data["is_analog"].ToString());
                     Dispatcher.Invoke(() => { 
-                        MpnList.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog));
-                        if (CPUCores > 1)
-                            MpnLoadingText.Text = String.Format("{0}/{1}", val + 1, rowCount); 
+                        MpnList.Add(new MPNClass(id, name, interId, interName, farmId, farmName, isSinonim, isAnalog));                            
                     });
-                    if (CPUCores > 1)
-                        Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, ++val });
+                    loadingInterval++;
+                    val++;
+                    if (CPUCores > 1 && (loadingInterval == SearchMainWindow.LoadingStepBig || val == rowCount ))
+                    {
+                        Dispatcher.Invoke(() => {
+                            MpnLoadingText.Text = String.Format("{0}/{1}", val, rowCount);
+                            MpnBar.Value = val;
+                        });
+                        //Dispatcher.Invoke(updProgress, new object[] { ProgressBar.ValueProperty, val });
+                        loadingInterval = 0;
+                    }
                 }
                 //mpnData.Fill(MPN_DT);
             }
@@ -555,6 +571,8 @@ namespace CCsearch
 
         private void MPN_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            inAction++;
+
             MPNClass sel_elem = (MPNClass)MPN.SelectedItem;
             if (sel_elem != null)
             {
@@ -1161,7 +1179,10 @@ namespace CCsearch
             }
             else
             {
-                selectMpn.Index = 0;
+                if (selectMpn != null)
+                    selectMpn.Index = 0;
+                else
+                    return;
             }
             selectedMpns.Add(selectMpn);
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
@@ -1193,7 +1214,10 @@ namespace CCsearch
             }
             else
             {
-                selectMpn.Index = 0;
+                if (selectMpn != null)
+                    selectMpn.Index = 0;
+                else
+                    return;
             }
             selectedMpns.Add(selectMpn);
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
@@ -1209,7 +1233,10 @@ namespace CCsearch
             }
             else
             {
-                selectMpn.Index = 0;
+                if (selectMpn != null)
+                    selectMpn.Index = 0;
+                else
+                    return;
             }
             selectedMpns.Add(selectMpn);
             SelectedMPNSwitcher.Content = String.Format("Выбранные позиции ({0})", selectedMpns.Count);
@@ -1420,6 +1447,24 @@ namespace CCsearch
         public void SetUserId(int User)
         {
             UserId = User;
+        }
+
+        public void AutoAnswerButton_Click(object sender, RoutedEventArgs e)
+        {
+            //Сбор данных и инициализация события автоответа
+            List<int> DrugstoreIds = new List<int>();
+            foreach (DrugstoreInfo final in finals)
+            {
+                if (final.Selected == true)
+                {
+                    if (DrugstoreIds.IndexOf(final.DDId) < 0)
+                    {
+                        DrugstoreIds.Add(final.DDId);
+                    }
+                }
+            }
+            if(onAutoAnswer != null)
+                onAutoAnswer(DrugstoreIds);
         }
 
         //Тестовая реализация обработчика события автоответа

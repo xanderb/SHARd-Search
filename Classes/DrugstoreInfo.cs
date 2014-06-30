@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace CCsearch
+namespace SHARd.Search
 {
     public class DrugstoreInfo :INotifyPropertyChanged
     {

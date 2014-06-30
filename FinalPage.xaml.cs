@@ -14,23 +14,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace CCsearch
+namespace SHARd.Search
 {
     /// <summary>
     /// Логика взаимодействия для FinalPage.xaml
     /// </summary>
     public partial class FinalPage : UserControl
     {
-        public MainWindow Main { get; set; }
-        public delegate void AutoAnswerDelegate(List<int> DrugstoreIds); //делегат для события автоответа со списком ID выбранных аптек
-
-        public event AutoAnswerDelegate onAutoAnswer; //событие автоответа
-
+        public SearchMainWindow Main { get; set; }
+        
         public FinalPage()
         {
             InitializeComponent();
         }
-        public FinalPage(MainWindow Wind)
+        public FinalPage(SearchMainWindow Wind)
         {
             this.Main = Wind;
             InitializeComponent();
@@ -80,19 +77,30 @@ namespace CCsearch
 
         private void AutoAnswerButton_Click(object sender, RoutedEventArgs e)
         {
-            //Сбор данных и инициализация события автоответа
-            List<int> DrugstoreIds = new List<int>();
-            foreach (DrugstoreInfo final in Main.finals)
+            Main.AutoAnswerButton_Click(sender, e);
+        }
+
+        private void AddInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            int SelectedRow = FinalGrid.SelectedIndex;
+            if (SelectedRow > -1)
             {
-                if (final.Selected == true)
-                {
-                    if (DrugstoreIds.IndexOf(final.DDId) < 0)
-                    {
-                        DrugstoreIds.Add(final.DDId);
-                    }
-                }
+                DrugstoreInfo DI = Main.finals[SelectedRow];
+                string HeaderWindow = "Дополнительная информация";
+                ObservableCollection<string> Texts = new ObservableCollection<string>();
+                Texts.Add(String.Format("Наименование учреждения - {0}, {1}, {2}", DI.DDName, DI.DDTel, DI.DDAddress));
+                Texts.Add(String.Format("Описание учреждения - {0}", DI.DDNote));
+                Texts.Add(String.Format("Наименование мед. препарата - {0}", DI.MpnName));
+                Texts.Add(String.Format("Международное наменование - {0}", DI.InterName));
+                Texts.Add(String.Format("Фармакологическая группа - {0}", DI.PgName));
+                Texts.Add(String.Format("Описание препарата - {0}", DI.MpnNote));
+                AnswerWindow AdditionalInfo = new AnswerWindow(Texts, HeaderWindow);
+                AdditionalInfo.Show();
             }
-            onAutoAnswer(DrugstoreIds);
+            else
+            {
+                MessageBox.Show("Выберите строку в таблице, чтобы посмотреть дополнительную информацию");
+            }
         }
     }
 }

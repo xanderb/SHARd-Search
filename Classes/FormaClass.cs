@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Runtime.CompilerServices;
 
-namespace CCsearch
+namespace SHARd.Search
 {
     public class FormaClass : INotifyPropertyChanged
     {

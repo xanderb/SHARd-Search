@@ -18,15 +18,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
+using System.ComponentModel;
 
-namespace CCsearch
+namespace SHARd.Search
 {
     /// <summary>
     /// Логика взаимодействия для SecondPage.xaml
     /// </summary>
     public partial class SecondPage : UserControl
     {
-        public MainWindow Main { get; set; }
+        public SearchMainWindow Main { get; set; }
         string[] Sort = new string[]
         {
                     "find_key desc",
@@ -42,12 +43,13 @@ namespace CCsearch
         };
         public int FormaRowIndex    = 0;
         public int MpRowIndex       = 0;
+        private BackgroundWorker worker = new BackgroundWorker();
 
         public SecondPage()
         {
             InitializeComponent();
         }
-        public SecondPage(MainWindow Main)
+        public SecondPage(SearchMainWindow Main)
         {
             this.Main = Main;
             InitializeComponent();
@@ -276,6 +278,15 @@ namespace CCsearch
             //FormaGrid.Items.Refresh();
         }
 
+        protected void SetInetStat(int city, int user, int mpn)
+        {
+            string sql = String.Format("exec p_add_stat_inet {0}, '', '', '', '', {2}, 0, 0, 0, 0, '','','','', 2, {1}", city, user, mpn);
+            SqlConnection common_dbc = new SqlConnection(Properties.Settings.Default.commonConnectionString);
+            SqlCommand sc = new SqlCommand(sql, common_dbc);
+            sc.Connection.Open();
+            sc.ExecuteNonQuery();
+        }
+
         private void DdSearch_Click(object sender, RoutedEventArgs e)
         {
             if (Main.City.SelectedItem != null && Main.Address.SelectedItem != null)
@@ -286,13 +297,48 @@ namespace CCsearch
                 if (GetFinalInfo(genericSql, 0))
                 {
                     Final.FinalGrid.ItemsSource = Main.finals;
-                    Main.MainTabs.SelectedIndex = MainWindow.FinalPage;
-                    Final.onAutoAnswer += Main.testAutoAnswerMessage; //Подписка на событие автоответа 
+                    Main.MainTabs.SelectedIndex = SearchMainWindow.FinalPage;
+                    if (Main.mps != null && Main.mps.Count > 0)
+                    {
+                        worker.DoWork += delegate(object senderer, DoWorkEventArgs erg)         //Записываем в фоне статистику по направлениям
+                        {
+                            foreach (KeyValuePair<int, ObservableCollection<MpClass>> kvpair in Main.mps)
+                            {
+                                int index = kvpair.Key;
+                                ObservableCollection<MpClass> mps = kvpair.Value;
+                                foreach(MpClass mp in mps)
+                                {
+                                    if (mp.Selected == true)
+                                    {
+                                        Dispatcher.Invoke(() =>
+                                        {
+                                            CityClass cityObj = (CityClass)Main.City.SelectedItem;
+                                            try
+                                            {
+                                                SetInetStat(cityObj.GetID(), Main.UserId, mp.GetMpnId());
+                                            }
+                                            finally
+                                            {
+                                                Dispatcher.InvokeAsync(() =>
+                                                {
+                                                    Main.DebugText.Text += String.Format("\r\nЗаписали статистику. MPN = {0}, user = {1}", mp.GetMpnId(), Main.UserId);
+                                                    Main.DebugText.ScrollToEnd();
+                                                });
+                                            }
+                                        });
+                                        break;
+                                    }
+                                }
+                            }
+                        };
+                        worker.RunWorkerAsync();
+                    }
+                    //Main.onAutoAnswer += Main.testAutoAnswerMessage; //Подписка на событие автоответа 
                 }
                 else
                 {
                     MessageBox.Show("Результаты по выбранному городу не найдены. Попробуйте найти во всех городах.");
-                    Main.MainTabs.SelectedIndex = MainWindow.FormaPage;
+                    Main.MainTabs.SelectedIndex = SearchMainWindow.FormaPage;
                 }
                 
             }
@@ -313,13 +359,48 @@ namespace CCsearch
                 if (GetFinalInfo(genericSql, 1))
                 {
                     Final.FinalGrid.ItemsSource = Main.finals;
-                    Main.MainTabs.SelectedIndex = MainWindow.FinalPage;
-                    Final.onAutoAnswer += Main.testAutoAnswerMessage; //подписка на событие автоответа
+                    Main.MainTabs.SelectedIndex = SearchMainWindow.FinalPage;
+                    if (Main.mps != null && Main.mps.Count > 0)
+                    {
+                        worker.DoWork += delegate(object senderer, DoWorkEventArgs erg)         //Записываем в фоне статистику по направлениям
+                        {
+                            foreach (KeyValuePair<int, ObservableCollection<MpClass>> kvpair in Main.mps)
+                            {
+                                int index = kvpair.Key;
+                                ObservableCollection<MpClass> mps = kvpair.Value;
+                                foreach (MpClass mp in mps)
+                                {
+                                    if (mp.Selected == true)
+                                    {
+                                        Dispatcher.Invoke(() =>
+                                        {
+                                            CityClass cityObj = (CityClass)Main.City.SelectedItem;
+                                            try
+                                            {
+                                                SetInetStat(cityObj.GetID(), Main.UserId, mp.GetMpnId());
+                                            }
+                                            finally
+                                            {
+                                                Dispatcher.InvokeAsync(() =>
+                                                {
+                                                    Main.DebugText.Text += String.Format("\r\nЗаписали статистику. MPN = {0}, user = {1}", mp.GetMpnId(), Main.UserId);
+                                                    Main.DebugText.ScrollToEnd();
+                                                });
+                                            }
+                                        });
+                                        break;
+                                    }
+                                }
+                            }
+                        };
+                        worker.RunWorkerAsync();
+                    }
+                    //Main.onAutoAnswer += Main.testAutoAnswerMessage; //подписка на событие автоответа
                 }
                 else
                 {
                     MessageBox.Show("Результаты по такому запросу в базе не найдены во всех городах. Поменяйте запрос и попробуйте снова");
-                    Main.MainTabs.SelectedIndex = MainWindow.FormaPage;
+                    Main.MainTabs.SelectedIndex = SearchMainWindow.FormaPage;
                 }
                 
             }

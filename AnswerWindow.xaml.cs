@@ -14,17 +14,27 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace CCsearch
+namespace SHARd.Search
 {
     /// <summary>
     /// Логика взаимодействия для AnswerWindow.xaml
     /// </summary>
     public partial class AnswerWindow : Window
     {
+        string Header = "Голосовой ответ";
         public AnswerWindow(ObservableCollection<string> Texts)
         {
             InitializeComponent();
             SimpleAnswerList.ItemsSource = Texts;
+            this.Title = Header;
+        }
+
+        public AnswerWindow(ObservableCollection<string> Texts, string Header)
+        {
+            InitializeComponent();
+            SimpleAnswerList.ItemsSource = Texts;
+            HeaderWindow.Text = Header;
+            this.Title = Header;
         }
 
         private void CloseAnswerWindow_Click(object sender, RoutedEventArgs e)
