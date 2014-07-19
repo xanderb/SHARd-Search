@@ -14,7 +14,8 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <ExpressionBlendVersion>5.0.40218.0</ExpressionBlendVersion>
     <PublishUrl>опубликовать\</PublishUrl>
     <Install>true</Install>
@@ -56,7 +57,7 @@
     <ApplicationIcon>old-edit-find_7373.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <StartupObject>CCsearch.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Effects" />
@@ -65,6 +66,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -91,7 +93,9 @@
     <Compile Include="AnswerWindow.xaml.cs">
       <DependentUpon>AnswerWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AnimatedGIFControl.cs" />
     <Compile Include="Classes\DrugstoreInfo.cs" />
+    <Compile Include="Classes\FileLog.cs" />
     <Compile Include="FinalPage.xaml.cs">
       <DependentUpon>FinalPage.xaml</DependentUpon>
     </Compile>
@@ -146,7 +150,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
@@ -180,6 +184,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="old-edit-find_7373.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="loading.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

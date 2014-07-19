@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
 using System.Data;
+using System.IO;
 
 
 namespace SHARd.Search
@@ -30,15 +31,13 @@ namespace SHARd.Search
         //SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
         //SqlConnection ch_php_dbc = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
         TextWriterTraceListener DListener = new TextWriterTraceListener(@"d:\work\LOGS\debugSHARd.Search.txt");
+        public FileLog FLog = new FileLog("");
         private BackgroundWorker worker = new BackgroundWorker();
         delegate void UpdateProgressBarDelegate(DependencyProperty dp, object value);
         public delegate void AutoAnswerDelegate(List<int> DrugstoreIds); //делегат для события автоответа со списком ID выбранных аптек
 
         public event AutoAnswerDelegate onAutoAnswer; //событие автоответа
-        //Не используются. Работа над задержкой ввода данных в текстовые поля
-        private int inAction = 0;
-        private int DelayTime = 200;
-        //******************************************************************//
+        
         public int FirmId = 0;
         public int UserId = 713;
         private int CPUCores;
@@ -79,10 +78,18 @@ namespace SHARd.Search
             InitializeComponent();
             selectedMpns.CollectionChanged += new NotifyCollectionChangedEventHandler(SelectedListChangeItem);
             GetCPUNumberOfCores();
-            DebugText.Text += String.Format("Процессор: {0}\r\nКол-во физических ядер: {1}, кол-во логических ядер: {2}", CPUName, CPUCores, CPULogicalCores);
+            if (Directory.Exists(@"\\10.123.7.2\spravka\Logs"))
+            {
+                FLog = new FileLog(@"\\10.123.7.2\spravka\Logs");
+            }
+            
+            SetUserId(713); //TEST логов
+            DebugText.Text += String.Format("Имя машины: {3}. Процессор: {0}\r\nКол-во физических ядер: {1}, кол-во логических ядер: {2}", CPUName, CPUCores, CPULogicalCores, Environment.MachineName);
+            FLog.Log(String.Format("Имя машины: {3}. Процессор: {0}\r\nКол-во физических ядер: {1}, кол-во логических ядер: {2}", CPUName, CPUCores, CPULogicalCores, Environment.MachineName));
             worker.WorkerReportsProgress = true;
             worker.WorkerSupportsCancellation = true;
             MPN_DT = CommonData.Tables.Add("MPN");
+            onAutoAnswer += testAutoAnswerMessage;
             if (CPUCores > 1)
             {
                 MPN_DT.RowChanged += new DataRowChangeEventHandler(MPN_DT_RowChanged);
@@ -132,9 +139,10 @@ namespace SHARd.Search
             {
                 PreloadSearch();
             }
+            FLog.Log(String.Format("Локальный режим = {0}", LocalCheck.IsChecked.ToString()));
         }
 
-        private void DebugMode(Action act)
+        public void DebugMode(Action act)
         {
             lock (this)
             {
@@ -149,9 +157,10 @@ namespace SHARd.Search
                 TimeSpan TimeInterval = EndTime.Subtract(StartTime);
                 Debug.WriteLine(String.Format("Время предзагрузки данных - {0}", TimeInterval.ToString()));
                 Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}", TimeInterval.ToString()); DebugText.ScrollToEnd(); }));
+                FLog.Log(String.Format("Время работы - {0}", TimeInterval.ToString()));
             }
         }
-        private void DebugMode(bool flag, Action act, string Label)
+        public void DebugMode(bool flag, Action act, string Label)
         {
             //lock (this)
             //{
@@ -166,9 +175,32 @@ namespace SHARd.Search
                 TimeSpan TimeInterval = EndTime.Subtract(StartTime);
                 Debug.WriteLine(String.Format("\r\nВремя предзагрузки данных - {0}, act= {1}", TimeInterval.ToString(), Label));
                 Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}, act= {1}", TimeInterval.ToString(), Label); DebugText.ScrollToEnd(); }));
+                lock (this)
+                {
+                    FLog.Log(String.Format("Время работы - {0}, act= {1}", TimeInterval.ToString(), Label));
+                }
             //}
         }
-        private void DebugMode(Action act, string Label)
+        public object DebugMode(Func<bool> act, string Label, int action)
+        {
+            Debug.Listeners.Add(DListener);
+            Debug.AutoFlush = true;
+
+            DateTime StartTime = DateTime.Now;
+
+            object ret = act();
+
+            DateTime EndTime = DateTime.Now;
+            TimeSpan TimeInterval = EndTime.Subtract(StartTime);
+            Debug.WriteLine(String.Format("\r\nВремя предзагрузки данных - {0}, act= {1}", TimeInterval.ToString(), Label));
+            Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}, act= {1}", TimeInterval.ToString(), Label); DebugText.ScrollToEnd(); }));
+            lock (this)
+            {
+                FLog.Log(String.Format("Время работы - {0}, act= {1}", TimeInterval.ToString(), Label));
+            }
+            return ret;
+        }
+        public void DebugMode(Action act, string Label)
         {
             lock (this)
             {
@@ -183,6 +215,7 @@ namespace SHARd.Search
                 TimeSpan TimeInterval = EndTime.Subtract(StartTime);
                 Debug.WriteLine(String.Format("\r\nВремя предзагрузки данных - {0}, act= {1}", TimeInterval.ToString(), Label));
                 Dispatcher.BeginInvoke(new ThreadStart(delegate { DebugText.Text += String.Format("\r\nВремя работы - {0}, act= {1}", TimeInterval.ToString(), Label); DebugText.ScrollToEnd(); }));
+                FLog.Log(String.Format("Время работы - {0}, act= {1}", TimeInterval.ToString(), Label));
             }
         }
 
@@ -265,7 +298,7 @@ namespace SHARd.Search
                 }
                 else
                 {
-                    Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nУспешно загружено"); });
+                    Dispatcher.Invoke(() => { DebugText.Text += String.Format("\r\nУспешно загружено"); FLog.Log(String.Format("Успешно загружено")); });
                     /*if (InterBar.Value == InterBar.Maximum && FarmBar.Value == FarmBar.Maximum && MpnBar.Value == MpnBar.Maximum && CityBar.Value == CityBar.Maximum)
                     {*/
                         LoadingWrap.Visibility = Visibility.Hidden;
@@ -571,50 +604,75 @@ namespace SHARd.Search
 
         private void MPN_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            inAction++;
-
             MPNClass sel_elem = (MPNClass)MPN.SelectedItem;
             if (sel_elem != null)
-            {
-                int index = MPN.SelectedIndex;
-                MPNList.SelectedIndex = index;
-                MPNList.ScrollIntoView(MPNList.SelectedItem);
-            }
-            ChangeInterFarmComboBox(sel_elem);
+                FLog.Log(String.Format("MPN_SelectionChanged. MPN изменен на {0}({1})", sel_elem.ToString(), sel_elem.GetID()));
         }
         
         private void Inter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             InterClass SelElem = (InterClass)Inter.SelectedItem;
-            if (SelElem != null)
-            {
-                int index = Inter.SelectedIndex;
-                InterList.SelectedIndex = index;
-                InterList.ScrollIntoView(InterList.SelectedItem);
-            }
+            if(SelElem != null)
+                FLog.Log(String.Format("Inter_SelectionChanged. Inter изменен на {0}({1})", SelElem.ToString(), SelElem.GetID()));
         }
 
         private void Farm_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             FarmClass SelElem = (FarmClass)Farm.SelectedItem;
             if (SelElem != null)
-            {
-                int index = Farm.SelectedIndex;
-                FarmList.SelectedIndex = index;
-                FarmList.ScrollIntoView(FarmList.SelectedItem);
-            }
+                FLog.Log(String.Format("Farm_SelectionChanged. Farm изменен на {0}({1})", SelElem.ToString(), SelElem.GetID()));
         }
 
         private void MPN_KeyUp(object sender, KeyEventArgs e)
         {
             MPNClass sel_elem = (MPNClass)MPN.SelectedItem;
             if (e.Key == Key.Return && sel_elem != null)
-                DebugText.Text += "\r\n Нажата клавиша Enter" + String.Format("Выбрано- {0}.{1}", sel_elem.GetID(), sel_elem.ToString());
+            {
+                DebugText.Text += "\r\nНажата клавиша Enter " + String.Format("Выбрано- {0}.{1}", sel_elem.GetID(), sel_elem.ToString());
+                FLog.Log(String.Format("MPN_KeyUp. Нажата клавиша Enter. Выбрано- {0}.{1}", sel_elem.GetID(), sel_elem.ToString()));
+                
+                int index = MPN.SelectedIndex;
+                MPNList.SelectedIndex = index;
+                MPNList.ScrollIntoView(MPNList.SelectedItem);
+                
+                ChangeInterFarmComboBox(sel_elem);
+            }
         }
-
+        private void Inter_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                InterClass SelElem = (InterClass)Inter.SelectedItem;
+                if (SelElem != null)
+                {
+                    DebugText.Text += "\r\nНажата клавиша Enter " + String.Format("Выбрано- {0}.{1}", SelElem.GetID(), SelElem.ToString());
+                    FLog.Log(String.Format("Inter_KeyUp. Нажата клавиша Enter. Выбрано- {0}.{1}", SelElem.GetID(), SelElem.ToString()));
+                    int index = Inter.SelectedIndex;
+                    InterList.SelectedIndex = index;
+                    InterList.ScrollIntoView(InterList.SelectedItem);
+                }
+            }
+        }
+        private void Farm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                FarmClass SelElem = (FarmClass)Farm.SelectedItem;
+                if (SelElem != null)
+                {
+                    DebugText.Text += "\r\nНажата клавиша Enter " + String.Format("Выбрано- {0}.{1}", SelElem.GetID(), SelElem.ToString());
+                    FLog.Log(String.Format("Farm_KeyUp. Нажата клавиша Enter. Выбрано- {0}.{1}", SelElem.GetID(), SelElem.ToString()));
+                    int index = Farm.SelectedIndex;
+                    FarmList.SelectedIndex = index;
+                    FarmList.ScrollIntoView(FarmList.SelectedItem);
+                }
+            }
+        }
         private void City_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             CityClass selectedCity = (CityClass)City.SelectedItem;
+            if(selectedCity != null)
+                FLog.Log(String.Format("City_SelectionChanged. Город изменен на {0}({1})", selectedCity.ToString(), selectedCity.GetID()));
             if (selectedCity != null)
             {
                 Address.IsEnabled = true;
@@ -629,12 +687,12 @@ namespace SHARd.Search
 
         private void City_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Return)
+            /*if (e.Key == Key.Return)
             {
                 CityClass selectedCity = (CityClass)City.SelectedItem;
                 if (selectedCity != null)
                 {
-                    DebugText.Text += "\r\n Нажата клавиша Enter " + String.Format("Выбрано- {0}.{1}", selectedCity.GetID(), selectedCity.ToString());
+                    DebugText.Text += "\r\nНажата клавиша Enter " + String.Format("Выбрано- {0}.{1}", selectedCity.GetID(), selectedCity.ToString());
                     Address.IsEnabled = true;
                     PreloadACComplex();
                 }
@@ -643,7 +701,7 @@ namespace SHARd.Search
                     Address.IsEnabled = false;
                     complexies.Clear();
                 }
-            }
+            }*/
         }
         
         private void MPN_GotFocus(object sender, RoutedEventArgs e)
@@ -702,6 +760,7 @@ namespace SHARd.Search
             string FilterText = Filter.Text;
             DebugText.Text += String.Format("\r\nтекст фильтра - \"{0}\"", FilterText);
             DebugText.ScrollToEnd();
+            FLog.Log(String.Format("FilterLocalTextBoxWork. текст фильтра - \"{0}\"", FilterText));
             List<MPNClass> FullContains = new List<MPNClass>();
             List<MPNClass> AllSliceContains = new List<MPNClass>();
             List<MPNClass> SliceContains = new List<MPNClass>();
@@ -712,8 +771,6 @@ namespace SHARd.Search
                 int CollectionCount = mpns.Count;
                 if (mpns.Count > 0)
                 {
-                    //Debug.WriteLine(String.Format("Работа локлаьного ФИЛЬТРА"));
-                    //DListener.WriteLine(String.Format("Работа фильтра"));
                     Parallel.For(0, CollectionCount, (i) =>
                     {
                         int contains = 0;
@@ -762,8 +819,9 @@ namespace SHARd.Search
                     //}
                     Dispatcher.Invoke(() =>
                     {
-                        DebugText.Text += String.Format("\r\nПолное совпадение: {0}", AllSliceContains.Count);
+                        DebugText.Text += String.Format("\r\nПолное совпадение: {0}, Начинающееся с одного из слов: {1}, Есть все слова: {2}", FullContains.Count, SliceContains.Count, AllSliceContains.Count);
                         DebugText.ScrollToEnd();
+                        FLog.Log(String.Format("Полное совпадение: {0}, Начинающееся с одного из слов: {1}, Есть все слова: {2}", FullContains.Count, SliceContains.Count, AllSliceContains.Count));
                         filters = new ObservableCollection<MPNClass>(FullContains.Concat(AllSliceContains).ToList<MPNClass>().Concat(SliceContains).ToList<MPNClass>());
                         FilterList.ItemsSource = filters;
                     });
@@ -777,6 +835,7 @@ namespace SHARd.Search
             string FilterText = Filter.Text;
             DebugText.Text += String.Format("\r\nтекст фильтра - \"{0}\"", FilterText);
             DebugText.ScrollToEnd();
+            FLog.Log(String.Format("FilterTextBoxWork. текст фильтра - \"{0}\"", FilterText));
             if (FilterText != "" && FilterText != null && FilterText.Length > 2)
             {
                 SqlConnection ch_php = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
@@ -825,15 +884,19 @@ namespace SHARd.Search
         }
         private void Filter_KeyUp(object sender, KeyEventArgs e)
         {
-            DebugMode(
-                true,
-                () => { 
-                    if (LocalCheck.IsChecked == true) 
-                        FilterLocalTextBoxWork(); 
-                    else 
-                        FilterTextBoxWork(); 
-                }, 
-                "Формирование листинга фильтра");
+            if (e.Key == Key.Return)
+            {
+                DebugMode(
+                    true,
+                    () =>
+                    {
+                        if (LocalCheck.IsChecked == true)
+                            FilterLocalTextBoxWork();
+                        else
+                            FilterTextBoxWork();
+                    },
+                    "Формирование листинга фильтра");
+            }
         }
         private void FilterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -890,6 +953,7 @@ namespace SHARd.Search
         private void SelectedListChangeItem(object sender, NotifyCollectionChangedEventArgs arg)
         {
             DebugText.Text += String.Format("\r\n Изменен список выбранных продуктов");
+            FLog.Log(String.Format("SelectedListChangeItem. Изменен список выбранных продуктов"));
             NewFormaTab(arg);
         }
         private void Sinonim_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -986,7 +1050,9 @@ namespace SHARd.Search
             string sql_farm_analog = "SELECT mpn.medical_product_name_name as name, mpn.medical_product_name_id as id, i.international_name_name as inter_name,	i.international_name_id as inter_id, f.pharmacological_group_id as farm_id,	f.pharmacological_group_name as farm_name, i.in_sinonim_flag as is_sinonim, f.pg_analog_flag as is_analog  FROM medical_product_name mpn WITH (NOLOCK) INNER JOIN international_name i ON i.international_name_id = mpn.international_name_id INNER JOIN pharmacological_group f ON f.pharmacological_group_id = mpn.pharmacological_group_id WHERE mpn.pharmacological_group_id = @farm AND f.pg_analog_flag = 1 ORDER BY mpn.medical_product_name_name ASC";
             DebugText.Text += String.Format("\r\nsinonim = \"{0}\", inter = \"{1}\"", sql_sinonim, InterId);
             DebugText.Text += String.Format("\r\nanalog = \"{0}\", pharm = \"{1}\"", sql_farm_analog, FarmId);
-            DebugText.ScrollToEnd();    
+            DebugText.ScrollToEnd();
+            FLog.Log(String.Format("SinonimsAnalogsAction. sinonim = \"{0}\", inter = \"{1}\"", sql_sinonim, InterId));
+            FLog.Log(String.Format("SinonimsAnalogsAction. analog = \"{0}\", pharm = \"{1}\"", sql_farm_analog, FarmId));
             if (SelItem.IsSinonim())
             {
                 //Sinonims
@@ -1154,6 +1220,7 @@ namespace SHARd.Search
             }
             
             //DebugText.Text += String.Format("\r\n Выбранная вкладка - {0}", MainTabs.SelectedIndex);
+            FLog.Log(String.Format("MainTabs_SelectionChanged. Выбранная вкладка - {0}", MainTabs.SelectedIndex));
         }
 
         private void SelectedMPNSwitcher_Click(object sender, RoutedEventArgs e)
@@ -1206,6 +1273,7 @@ namespace SHARd.Search
 
         private void Sinonim_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+
             MPNClass selectMpn = (MPNClass)Sinonim.SelectedItem;
             if (selectedMpns.Count != 0)
             {
@@ -1225,6 +1293,7 @@ namespace SHARd.Search
 
         private void Analog_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+
             MPNClass selectMpn = (MPNClass)Analog.SelectedItem;
             if (selectedMpns.Count != 0)
             {
@@ -1254,21 +1323,21 @@ namespace SHARd.Search
             MainTabs.SelectedIndex = ListPage;
             SelectedMPNSwitcher.Content = "Выбранные позиции (0)";
             Filter.Text = "";
-            
+
             formas.Clear();
             mps.Clear();
             selectedMpns.Clear();
             sinonims.Clear();
             analogs.Clear();
-            if(filters != null)
+            if (filters != null)
                 filters.Clear();
-            
-            
+            FLog.Log("ClearAll_Click. Форма очищена");
         }
 
         private void AddMpn_Click(object sender, RoutedEventArgs e)
         {
-            MainTabs.SelectedIndex = ListPage; 
+
+            MainTabs.SelectedIndex = ListPage;
             MPN.SelectedIndex = -1;
             Inter.SelectedIndex = -1;
             Farm.SelectedIndex = -1;
@@ -1278,10 +1347,26 @@ namespace SHARd.Search
             //Address.SelectedIndex = -1;
             sinonims.Clear();
             analogs.Clear();
+            FLog.Log("AddMpn_Click. Нажата кнопка добавления препарата");
         }
         #endregion
 
         #region wpf controls work
+
+        private void SearchWindow_Closed(object sender, EventArgs e)
+        {
+            FLog.CloseLogStream();
+        }
+
+        private void LocalCheck_Checked(object sender, RoutedEventArgs e)
+        {
+            FLog.Log("Установлен локальный режим");
+        }
+
+        private void LocalCheck_Unchecked(object sender, RoutedEventArgs e)
+        {
+            FLog.Log("Выключен локальный режим");
+        }
 
         private void NewFormaTab(NotifyCollectionChangedEventArgs arg)
         {
@@ -1438,15 +1523,19 @@ namespace SHARd.Search
                     }
                 }
             }
+            FLog.Log(String.Format("SelectedMPN_SelectionChanged. Выбор препарата \"{0}\" в списке выбранных.", SelectedItem.ToString()));
         }
 
         public void SetFirmId(int Firm)
         {
             FirmId = Firm;
+            FLog.Log(String.Format("SetFirmId. Установлена фирма {0}.", Firm));
         }
         public void SetUserId(int User)
         {
             UserId = User;
+            FLog.Log(String.Format("SetUserId. Установлен пользователь {0}.", User));
+            FLog.AddUser(User); //Добавляем id пользователя для записи в лог
         }
 
         public void AutoAnswerButton_Click(object sender, RoutedEventArgs e)
@@ -1470,13 +1559,45 @@ namespace SHARd.Search
         //Тестовая реализация обработчика события автоответа
         public void testAutoAnswerMessage(List<int> Ids)
         {
-            string sumIds = "";
-            foreach(int id in Ids)
+            FLog.Log(String.Format("Обработано событие автоответа. переданные ID аптек: {0}", String.Join(",", Ids)));
+            var result = MessageBox.Show("Очистить форму?", "Автоответ успешно отправлен", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes)
             {
-                sumIds += "\r\n" + id.ToString();
+                this.ClearAll_Click(ClearAll, new RoutedEventArgs());
             }
-            MessageBox.Show(String.Format("обработано событие автоответа. переданные ID аптек: {0}", sumIds));
         }
+
+        public bool SetCityFromCall(int cityId)
+        {
+            if (cityId > 0)
+            {
+                FLog.Log(String.Format("SetCityFromCall. Автоматически установлен город {0}", cityId));
+                int index = 0;
+                foreach(CityClass city in cities)
+                {
+                    if (cityId == city.GetID())
+                    {
+                        City.SelectedIndex = index;
+                        return true;
+                    }
+                    index++;
+                }
+                return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(SetCityFromCall(23))
+                DebugText.Text += String.Format("\r\nСимуляция выбора города по звонку. Успешно!");
+            else
+                DebugText.Text += String.Format("\r\nСимуляция выбора города по звонку. Не удалось!");
+        }
+
     }
 
     

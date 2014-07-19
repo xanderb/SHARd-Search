@@ -90,7 +90,7 @@
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="FilterSubmit" Content="Применить фильтр" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Grid.Column="1"/>
+            <Button x:Name="FilterSubmit" Content="Применить фильтр" HorizontalAlignment="Stretch" Margin="0" VerticalAlignment="Stretch" Grid.Column="1" Click="FilterSubmit_Click"/>
             <TextBox x:Name="FilterText" HorizontalAlignment="Stretch" Margin="11,0,10,0" TextWrapping="Wrap" VerticalAlignment="Stretch" FontSize="14"  />
         </Grid>
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0" Grid.Row="0" >
@@ -100,9 +100,9 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <Button Content="Дистанция" HorizontalAlignment="Stretch" Margin="10, 0, 2, 0" VerticalAlignment="Stretch" Padding="3"/>
-            <Button Content="Наличие и дистанция" HorizontalAlignment="Stretch" Margin="2, 0, 2, 0" VerticalAlignment="Stretch" Padding="3" Grid.Column="1"/>
-            <Button Content="Дата" HorizontalAlignment="Stretch" Margin="2, 0, 2, 0" VerticalAlignment="Stretch" Padding="3"  Grid.Column="2" />
+            <Button x:Name="SortDist" Content="Дистанция" HorizontalAlignment="Stretch" Margin="10, 0, 2, 0" VerticalAlignment="Stretch" Padding="3" Click="SortDist_Click"/>
+            <Button x:Name="SortNalDist" Content="Наличие и дистанция" HorizontalAlignment="Stretch" Margin="2, 0, 2, 0" VerticalAlignment="Stretch" Padding="3" Grid.Column="1" Click="SortNalDist_Click"/>
+            <Button x:Name="SortDate" Content="Дата" HorizontalAlignment="Stretch" Margin="2, 0, 2, 0" VerticalAlignment="Stretch" Padding="3"  Grid.Column="2" Click="SortDate_Click" />
         </Grid>
         <Grid Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="0" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>

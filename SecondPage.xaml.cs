@@ -28,7 +28,7 @@ namespace SHARd.Search
     public partial class SecondPage : UserControl
     {
         public SearchMainWindow Main { get; set; }
-        string[] Sort = new string[]
+        public string[] Sort = new string[]
         {
                     "find_key desc",
                     "search_Count desc",
@@ -120,6 +120,7 @@ namespace SHARd.Search
                     formaIdArray[i] = Forma[i].GetId();
             }
             string FormaIn = String.Join(",", formaIdArray);
+            Main.FLog.Log(String.Format("Second Page - MpSearch_Click. Выбраны следующие формы выпуска (id): {0}", FormaIn));
             SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
             string sql = string.Format("SELECT mpn.medical_product_name_name as mpn, mpn.medical_product_name_id as mpn_id, mf.medical_form_name as mfn, mp.medical_product_id as mp_id, mp.medical_product_str as mp_str1, mp.medical_product_str2 as mp_str2, mp.medical_form_id as mf_id FROM medical_product mp WITH (NOLOCK) INNER JOIN medical_product_name mpn WITH (NOLOCK) ON mp.medical_product_name_id = mpn.medical_product_name_id INNER JOIN medical_form mf WITH (NOLOCK) ON mp.medical_form_id = mf.medical_form_id WHERE mp.medical_product_name_id = @mpn_id AND mf.medical_form_id IN ({0}) ORDER BY mpn.medical_product_name_name ASC, mp.medical_form_id ASC, mp.medical_product_str ASC", FormaIn);
             SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
@@ -286,12 +287,20 @@ namespace SHARd.Search
             sc.Connection.Open();
             sc.ExecuteNonQuery();
         }
+        protected void SetInetStat(int city, int user, int mpn, int dd, int mp)
+        {
+            string sql = String.Format("exec p_add_stat_inet {0}, '', '', '', '', {2}, {4}, {3}, 0, 0, '','','','', 2, {1}", city, user, mpn, dd, mp);
+            SqlConnection common_dbc = new SqlConnection(Properties.Settings.Default.commonConnectionString);
+            SqlCommand sc = new SqlCommand(sql, common_dbc);
+            sc.Connection.Open();
+            sc.ExecuteNonQuery();
+        }
 
         private void DdSearch_Click(object sender, RoutedEventArgs e)
         {
             if (Main.City.SelectedItem != null && Main.Address.SelectedItem != null)
             {
-                FinalPage Final = new FinalPage(this.Main);
+                FinalPage Final = new FinalPage(this.Main, this);
                 Main.FinalTab.Content = Final;
                 string genericSql = GenerateMpSqlTable();
                 if (GetFinalInfo(genericSql, 0))
@@ -306,7 +315,7 @@ namespace SHARd.Search
                             {
                                 int index = kvpair.Key;
                                 ObservableCollection<MpClass> mps = kvpair.Value;
-                                foreach(MpClass mp in mps)
+                                foreach (MpClass mp in mps)
                                 {
                                     if (mp.Selected == true)
                                     {
@@ -323,6 +332,7 @@ namespace SHARd.Search
                                                 {
                                                     Main.DebugText.Text += String.Format("\r\nЗаписали статистику. MPN = {0}, user = {1}", mp.GetMpnId(), Main.UserId);
                                                     Main.DebugText.ScrollToEnd();
+                                                    Main.FLog.Log(String.Format("SecondPage - DdSearch_Click. Записали статистику. MPN = {0}, user = {1}", mp.GetMpnId(), Main.UserId));
                                                 });
                                             }
                                         });
@@ -333,19 +343,20 @@ namespace SHARd.Search
                         };
                         worker.RunWorkerAsync();
                     }
-                    //Main.onAutoAnswer += Main.testAutoAnswerMessage; //Подписка на событие автоответа 
+                    //Main.onAutoAnswer += Main.testAutoAnswerMessage; //Подписка на событие автоответа
+                    Main.FLog.Log(String.Format("Second Page - DdSearch_Click. Успешный поиск выбранных препаратов в выбранном городе"));
                 }
                 else
                 {
                     MessageBox.Show("Результаты по выбранному городу не найдены. Попробуйте найти во всех городах.");
                     Main.MainTabs.SelectedIndex = SearchMainWindow.FormaPage;
                 }
-                
+
             }
             else
             {
-                MessageBox.Show("Не выбран адрес клиента!");
-                Main.Address.Focus();
+                MessageBox.Show("Не выбран город и адрес клиента!");
+                Dispatcher.Invoke(() => { Main.City.Focus(); Main.FLog.Log("Попытка передачи фокуса в combobox City"); });
             }
         }
 
@@ -353,7 +364,7 @@ namespace SHARd.Search
         {
             if (Main.City.SelectedItem != null && Main.Address.SelectedItem != null)
             {
-                FinalPage Final = new FinalPage(this.Main);
+                FinalPage Final = new FinalPage(this.Main, this);
                 Main.FinalTab.Content = Final;
                 string genericSql = GenerateMpSqlTable();
                 if (GetFinalInfo(genericSql, 1))
@@ -385,6 +396,7 @@ namespace SHARd.Search
                                                 {
                                                     Main.DebugText.Text += String.Format("\r\nЗаписали статистику. MPN = {0}, user = {1}", mp.GetMpnId(), Main.UserId);
                                                     Main.DebugText.ScrollToEnd();
+                                                    Main.FLog.Log(String.Format("SecondPage - DdAllSearch_Click. Записали статистику. MPN = {0}, user = {1}", mp.GetMpnId(), Main.UserId));
                                                 });
                                             }
                                         });
@@ -396,29 +408,32 @@ namespace SHARd.Search
                         worker.RunWorkerAsync();
                     }
                     //Main.onAutoAnswer += Main.testAutoAnswerMessage; //подписка на событие автоответа
+                    Main.FLog.Log(String.Format("Second Page - DdSearch_Click. Успешный поиск выбранных препаратов во всех городах"));
                 }
                 else
                 {
                     MessageBox.Show("Результаты по такому запросу в базе не найдены во всех городах. Поменяйте запрос и попробуйте снова");
                     Main.MainTabs.SelectedIndex = SearchMainWindow.FormaPage;
                 }
-                
+
             }
             else
             {
-                MessageBox.Show("Не выбран адрес клиента!");
-                Main.Address.Focus();
+                MessageBox.Show("Не выбран город и адрес клиента!");
+                Dispatcher.Invoke(() => { Main.City.Focus(); Main.FLog.Log("Попытка передачи фокуса в combobox City"); });
             }
         }
 
-        /*
-         *TODO Передача в функцию ID фирмы (от управляющей програмы) 
-         */
-        protected bool GetFinalInfo(string predSql, int all_area)
+        public string GenerateFinalSQL(string predSql, int all_area)
         {
-            int firm_id = Main.FirmId ; //Костыль!! Надо принимать валидный id фирмы от управляющей программы
-            int user_id = Main.UserId; //Костыль!! Надо принимать правильный user_id от управляющей программы
-            
+            return GenerateFinalSQL(predSql, all_area, null);
+        }
+
+        public string GenerateFinalSQL(string predSql, int all_area, string FilterText)
+        {
+            int firm_id = Main.FirmId;
+            int user_id = Main.UserId;
+
             ComplexClass SelComplex = (ComplexClass)Main.Address.SelectedItem;
             int complex_id = SelComplex.GetID();
             string sql = String.Format(@"declare @block0 varchar(250) = convert(varchar, getdate(), 126);
@@ -462,11 +477,11 @@ namespace SHARd.Search
                     inner join complex c with(nolock) on dd.complex_id = c.complex_id
                 where
                   (c.area_id = @area_id or @area_all = 1) and (dd.firm_id=@firm_id or @firm_id=0)
-                ", all_area, predSql, complex_id,user_id);
-                if(firm_id != null && firm_id > 0)
-                    sql += " and dd.find_key > 0";
+                ", all_area, predSql, complex_id, user_id);
+            if (firm_id != null)
+                sql += " and dd.find_key > 0";
 
-               sql += String.Format(@"
+            sql += String.Format(@"
                ------------------------------------------------------
 
                 declare @block3 varchar(250) = convert(varchar, getdate(), 126)
@@ -569,9 +584,9 @@ namespace SHARd.Search
                     inner join @t_dd                dd_                             on dd_.drugstore_department_id = prm.drugstore_department_id
                     inner join dd_voice				dd_v  with(nolock)				on dd.drugstore_department_id  = dd_v.drugstore_department_id
                     left  join @dd_cnt              dd_cnt                          on dd.drugstore_department_id  = dd_cnt.drugstore_department_id ");
-                if(firm_id != null && firm_id > 0)
-                    sql += String.Format(" where dd.firm_id = {0} AND dd.dd_outsourcing = 1", firm_id);
-                sql += String.Format(@"
+            if (firm_id != null && firm_id > 0)
+                sql += String.Format(" where dd.firm_id = {0} AND dd.dd_outsourcing = 1", firm_id);
+            sql += String.Format(@"
                 order by
                   presence_id asc,
                   ds_complex_priority asc
@@ -757,48 +772,89 @@ namespace SHARd.Search
                   left join country               c     with (nolock) on c.country_id                  = ds_mp.country_id
                ) tab
         ");
+            if (FilterText != null)
+                sql += " WHERE " + FilterText;
             sql += " order by ";
             sql += String.Join(",", this.Sort);
-
-            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
-            SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
-            ch_d_1_dbc.Open();
-            SqlDataReader data = sc.ExecuteReader();
-            Main.finals.Clear();
-            try
-            {
-                int index = 0;
-                if (data.HasRows)
-                {
-                    while (data.Read())
-                    {
-                        IDataRecord DataRecord = (IDataRecord)data;
-                        DrugstoreInfo DD = new DrugstoreInfo(DataRecord);
-                        DD.Index = index;
-                        index++;
-                        Main.finals.Add(DD);
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
-            catch (Exception except)
-            {
-                MessageBox.Show("ERROR! " + except.Message.ToString() + except.Source.ToString() + except.TargetSite.ToString());
-                return false;
-            }
-            finally
-            {
-                ch_d_1_dbc.Dispose();
-                data.Close();    
-            }
-            return true;
+            Main.FLog.Log(String.Format("---------------\r\nИтоговый запрос:\r\n{0}\r\n----------------------", sql));
+            return sql;
         }
 
-        protected string GenerateMpSqlTable()
+        public bool GetFinalInfo(string PredSql, int all_area)
+        {
+            return GetFinalInfo(PredSql, all_area, null);
+        }
+
+        public bool GetFinalInfo(string predSql, int all_area, string FilterText)
+        {
+           return (bool)Main.DebugMode(() =>
+                {
+                    string sql = GenerateFinalSQL(predSql, all_area, FilterText);
+                    
+                    SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
+                    SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
+                    ch_d_1_dbc.Open();
+                    SqlDataReader data = sc.ExecuteReader();
+                    Main.finals.Clear();
+                    try
+                    {
+                        int index = 0;
+                        if (data.HasRows)
+                        {
+                            while (data.Read())
+                            {
+                                IDataRecord DataRecord = (IDataRecord)data;
+                                DrugstoreInfo DD = new DrugstoreInfo(DataRecord);
+                                DD.PropertyChanged += DD_PropertyChanged;
+                                DD.Index = index;
+                                index++;
+                                Main.finals.Add(DD);
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+
+                    }
+                    catch (Exception except)
+                    {
+                        MessageBox.Show("ERROR! " + except.Message.ToString() + except.Source.ToString() + except.TargetSite.ToString());
+                        return false;
+                    }
+                    finally
+                    {
+                        ch_d_1_dbc.Dispose();
+                        data.Close();
+                    }
+                    return true;
+                }, "Final Info", 1);
+        }
+
+        private void DD_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            DrugstoreInfo drugstore = (DrugstoreInfo)sender;
+            string propName = e.PropertyName;
+            if ((bool)drugstore.Selected)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CityClass cityObj = (CityClass)Main.City.SelectedItem;
+                    try
+                    {
+                        SetInetStat(cityObj.GetID(), Main.UserId, drugstore.MpnId, drugstore.DDId, drugstore.MpId);
+                    }
+                    finally
+                    {
+                        Main.DebugText.Text += String.Format("\r\nЗаписали статистику, index = {4}. MPN = {0}, user = {1}, dd = {2}, mp = {3}", drugstore.MpnId, Main.UserId, drugstore.DDId, drugstore.MpId, drugstore.Index);
+                        Main.DebugText.ScrollToEnd();
+                        Main.FLog.Log(String.Format("SecondPage - DD_PropertyChanged. Записали статистику, index = {4}. MPN = {0}, user = {1}, dd = {2}, mp = {3}", drugstore.MpnId, Main.UserId, drugstore.DDId, drugstore.MpId, drugstore.Index));
+                    }
+                });
+            }
+        }
+
+        public string GenerateMpSqlTable()
         {
             if (Main.mps != null && Main.mps.Count > 0)
             {

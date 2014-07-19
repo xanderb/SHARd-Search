@@ -10,6 +10,7 @@ namespace SHARd.Search
     {
         int id;
         string cname;
+        public int Index { get; set; }
 
         public CityClass(int id, string name) 
         {

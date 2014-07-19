@@ -77,3 +77,4 @@ I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch_MarkupCompile.lref
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.g.resources
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.exe
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.pdb
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\GeneratedInternalTypeHelper.g.cs
