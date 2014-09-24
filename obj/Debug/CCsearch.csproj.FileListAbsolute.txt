@@ -10,7 +10,6 @@ D:\Work\SHARd\CCsearch\obj\Debug\SearchWindow.g.cs
 D:\Work\SHARd\CCsearch\obj\Debug\App.g.cs
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch_MarkupCompile.cache
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.g.resources
-D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.Properties.Resources.resources
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.csproj.GenerateResource.Cache
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.exe
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.pdb
@@ -78,3 +77,5 @@ I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.g.resources
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.exe
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.pdb
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Work\SHARd\CCsearch\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Work\SHARd\CCsearch\obj\Debug\SHARd.Search.Properties.Resources.resources

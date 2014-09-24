@@ -34,7 +34,7 @@ namespace SHARd.Search
             }
             else
             {
-                this.FilePath = @"D:\SHARdSearch\Logs\"+ComputerName;
+                this.FilePath = Properties.Settings.Default.log_directory.ToString() + ComputerName;
                 dirD = new DirectoryInfo(@FilePath);
                 if (!dirD.Exists)
                     dirD.Create();

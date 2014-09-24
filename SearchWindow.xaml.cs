@@ -30,7 +30,7 @@ namespace SHARd.Search
         public const int LoadingStepBig = 1000;
         //SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
         //SqlConnection ch_php_dbc = new SqlConnection(Properties.Settings.Default.ch_phpConnectionString);
-        TextWriterTraceListener DListener = new TextWriterTraceListener(@"d:\work\LOGS\debugSHARd.Search.txt");
+        TextWriterTraceListener DListener = new TextWriterTraceListener(Properties.Settings.Default.log_directory.ToString() + @"debugSHARd.Search.txt");
         public FileLog FLog = new FileLog("");
         private BackgroundWorker worker = new BackgroundWorker();
         delegate void UpdateProgressBarDelegate(DependencyProperty dp, object value);
@@ -1554,17 +1554,19 @@ namespace SHARd.Search
             }
             if(onAutoAnswer != null)
                 onAutoAnswer(DrugstoreIds);
-        }
 
-        //Тестовая реализация обработчика события автоответа
-        public void testAutoAnswerMessage(List<int> Ids)
-        {
-            FLog.Log(String.Format("Обработано событие автоответа. переданные ID аптек: {0}", String.Join(",", Ids)));
+            FLog.Log(String.Format("Обработано событие автоответа. переданные ID аптек: {0}", String.Join(",", DrugstoreIds)));
             var result = MessageBox.Show("Очистить форму?", "Автоответ успешно отправлен", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
                 this.ClearAll_Click(ClearAll, new RoutedEventArgs());
             }
+        }
+
+        //Тестовая реализация обработчика события автоответа
+        public void testAutoAnswerMessage(List<int> Ids)
+        {
+            return;
         }
 
         public bool SetCityFromCall(int cityId)

@@ -30,7 +30,7 @@
                         <GridViewColumn Header="Флаг" Width="35">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <CheckBox Tag="{Binding Index}" IsChecked="{Binding Path=Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Name="FormaCheckbox" />
+                                    <CheckBox Tag="{Binding Index}" IsChecked="{Binding Path=Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Name="FormaCheckbox" UseLayoutRounding="False" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>

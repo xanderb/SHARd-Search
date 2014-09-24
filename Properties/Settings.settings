@@ -27,5 +27,8 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=db1.it-park.smed;Initial Catalog=common;Persist Security Info=True;User ID=sa;Password=903</Value>
     </Setting>
+    <Setting Name="log_directory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">log/</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
