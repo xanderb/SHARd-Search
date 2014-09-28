@@ -93,11 +93,20 @@
     <Compile Include="AnswerWindow.xaml.cs">
       <DependentUpon>AnswerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AnimatedGIFControl.cs" />
     <Compile Include="Classes\DrugstoreInfo.cs" />
     <Compile Include="Classes\FileLog.cs" />
+    <Compile Include="Classes\SMSClass.cs" />
     <Compile Include="FinalPage.xaml.cs">
       <DependentUpon>FinalPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\SMS\SMS.xaml.cs">
+      <DependentUpon>SMS.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\SMS\SMSAnswerWindow.xaml.cs">
+      <DependentUpon>SMSAnswerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Modules\SMS\SMSListWindow.xaml.cs">
+      <DependentUpon>SMSListWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="SecondPage.xaml.cs">
       <DependentUpon>SecondPage.xaml</DependentUpon>
@@ -107,6 +116,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FinalPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\SMS\SMS.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\SMS\SMSAnswerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Modules\SMS\SMSListWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

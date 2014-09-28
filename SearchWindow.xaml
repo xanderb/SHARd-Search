@@ -4,7 +4,7 @@
     x:Name="SearchWindow" 
     x:Class="SHARd.Search.SearchMainWindow" 
     xmlns:UserControl="clr-namespace:SHARd.Search"
-    xmlns:local="clr-namespace:SHARd.Search.Animate"
+    xmlns:SMS="clr-namespace:SHARd.Search.Modules.SMS"
     Title="Поиск Call Центр Справмедика" 
     Width="1200" 
     Height="600" 
@@ -101,7 +101,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Grid Name="LoadingWrap" Visibility="Visible">
+        <Grid Name="LoadingWrap" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="1*"/>
@@ -121,7 +121,7 @@
             <TextBlock x:Name="CityLoadingText" HorizontalAlignment="Stretch" Margin="546,178,546,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
 
         </Grid>
-        <Grid x:Name="MainGrid" Style="{StaticResource cbStyle}" Width="Auto" Height="Auto" Visibility="Hidden">
+        <Grid x:Name="MainGrid" Style="{StaticResource cbStyle}" Width="Auto" Height="Auto" Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="50"/>
@@ -317,7 +317,7 @@
                 <Button Content="Добавить" HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource RulledButtons}" Height="30" Click="AddMpn_Click" Name="AddMpn"/>
             </Grid>
             <Button x:Name="TestButton" Content="CityTest" Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" VerticalAlignment="Top" Width="75" Click="TestButton_Click" Visibility="Hidden" />
-            <local:AnimatedGIFControl x:Name="Load" Grid.Column="1" Grid.Row="1" Margin="10" Source="loading.gif" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Hidden" />
+            <SMS:SMS Grid.Column="1" Margin="15,5,10,0" Grid.Row="1" Grid.RowSpan="2" Width="Auto" VerticalAlignment="Top"/>
         </Grid>
     </Grid>
 

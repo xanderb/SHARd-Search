@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.Data;
 using System.IO;
+using SHARd.Search.Modules.SMS;
 
 
 namespace SHARd.Search

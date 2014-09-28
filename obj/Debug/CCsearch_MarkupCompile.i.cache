@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-D:\Work\SHARd\CCsearch\obj\Debug\
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\
 SHARd.Search
 none
 false
 DEBUG;TRACE
-D:\Work\SHARd\CCsearch\App.xaml
-4-20996396
+I:\!Development!\SHARdSearch\CCsearch\App.xaml
+7-1156583376
 
-23993035665
-23-1280007094
-AnswerWindow.xaml;FinalPage.xaml;SearchWindow.xaml;SecondPage.xaml;
+26924200077
+20917533267
+AnswerWindow.xaml;FinalPage.xaml;Modules\SMS\SMS.xaml;Modules\SMS\SMSAnswerWindow.xaml;Modules\SMS\SMSListWindow.xaml;SearchWindow.xaml;SecondPage.xaml;
 
 False
 

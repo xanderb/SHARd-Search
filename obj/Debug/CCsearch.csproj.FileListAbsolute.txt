@@ -49,10 +49,6 @@ D:\Work\SHARd\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache
 D:\Work\SHARd\CCsearch\obj\Debug\SecondPage.baml
 D:\Work\SHARd\CCsearch\obj\Debug\SecondPage.g.cs
 D:\Work\SHARd\CCsearch\obj\Debug\CCsearch_MarkupCompile.lref
-I:\!Development!\SHARdSearch\CCsearch\bin\Debug\WPFToolkit.dll
-I:\!Development!\SHARdSearch\CCsearch\bin\Debug\System.Windows.Controls.Input.Toolkit.pdb
-I:\!Development!\SHARdSearch\CCsearch\bin\Debug\WPFToolkit.pdb
-I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\SecondPage.baml
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\SearchWindow.g.cs
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\SecondPage.g.cs
@@ -76,6 +72,13 @@ I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch_MarkupCompile.lref
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.g.resources
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.exe
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.pdb
-I:\!Development!\SHARdSearch\CCsearch\obj\Debug\GeneratedInternalTypeHelper.g.cs
 D:\Work\SHARd\CCsearch\obj\Debug\GeneratedInternalTypeHelper.g.cs
 D:\Work\SHARd\CCsearch\obj\Debug\SHARd.Search.Properties.Resources.resources
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMS.baml
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMSAnswerWindow.baml
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMSListWindow.baml
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMS.g.cs
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMSAnswerWindow.g.cs
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMSListWindow.g.cs
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\GeneratedInternalTypeHelper.g.cs
+I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache
