@@ -70,6 +70,7 @@ namespace SHARd.Search
         public ObservableCollection<DrugstoreInfo> finals = new ObservableCollection<DrugstoreInfo>();
         public Dictionary<int, ObservableCollection<FormaClass>> formas = new Dictionary<int, ObservableCollection<FormaClass>>();
         public Dictionary<int, ObservableCollection<MpClass>> mps = new Dictionary<int, ObservableCollection<MpClass>>();
+        public ObservableCollection<SMSClass> sms_messages = new ObservableCollection<SMSClass>();
         DataSet CommonData = new DataSet("ch_d_1");
         DataTable MPN_DT; 
         #endregion
