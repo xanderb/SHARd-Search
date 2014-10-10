@@ -30,16 +30,17 @@ namespace SHARd.Search
         public SearchMainWindow Main { get; set; }
         public string[] Sort = new string[]
         {
-                    "find_key desc",
-                    "search_Count desc",
-                    "ds_complex_priority asc",
-                    "dd_count asc",
-                    "ds_name",
-                    "dd_name",
-                    "mpn_name",
-                    "mf_name",
-                    "p_name",
-                    "mp_str"
+            "order_flag",
+            "find_key desc",
+            "search_Count desc",
+            "ds_complex_priority asc",
+            "dd_count asc",
+            "ds_name",
+            "dd_name",
+            "mpn_name",
+            "mf_name",
+            "p_name",
+            "mp_str"
         };
         public int FormaRowIndex    = 0;
         public int MpRowIndex       = 0;
@@ -525,7 +526,9 @@ namespace SHARd.Search
                   @t_param prm
                     inner join ds_medical_product ds_mp with(nolock) on prm.medical_product_id      = ds_mp.medical_product_id
                 where
-                  ds_mp.presence_id = 1 AND ds_mp.ds_mp_presence_tsdate <= getdate()
+                  ds_mp.ds_mp_presence_tsdate <= getdate()
+                  and
+                  (ds_mp.presence_id = 1 or (ds_mp.presence_id = 2 and ds_mp.order_flag = 1))
 
                 declare @block325 varchar(250) = convert(varchar, getdate(), 126);
 
@@ -732,6 +735,7 @@ namespace SHARd.Search
                   ds_mp.ds_mp_presence_tsdate as ds_mp_presence_tsdate,
                   '-----' as stat,
                   ds_mp.load_str_lek_id,
+                    case when order_flag = 1 then '(Под заказ) ' else '' end +
                   isnull(ds_mp.load_str_lek_name,
                     m_p_n.medical_product_name_name + ' ' +
                     m_f.medical_form_name + ' ' +

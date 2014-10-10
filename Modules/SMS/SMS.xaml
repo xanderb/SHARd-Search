@@ -4,13 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Height="70" Width="450" BorderThickness="1" BorderBrush="Gray" >
+             d:DesignHeight="300" d:DesignWidth="300" Height="70" Width="450" BorderThickness="0,1,1,0" BorderBrush="Gray" >
     <UserControl.Resources>
         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0" x:Name="NormalButton" x:Key="NormalButton">
             <GradientStop Color="#FFE6E6E6" Offset="1"/>
             <GradientStop Color="#FFFFFFFF" />
         </LinearGradientBrush>
-        
+
         <Style x:Key="RulledButtons" x:Name="RulledButtons" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource NormalButton}" />
             <Setter Property="Foreground" Value="Black"/>
@@ -30,9 +30,10 @@
         </Grid.ColumnDefinitions>
         <TextBlock HorizontalAlignment="Left" Margin="10,0,5,0" TextWrapping="Wrap" Text="SMS:" FontSize="14" VerticalAlignment="Center"/>
         <TextBlock Name="SMSCount" HorizontalAlignment="Left" Margin="45,0,5,0" TextWrapping="Wrap" Text="0" FontSize="20" Foreground="#FF52B004" FontWeight="Bold" VerticalAlignment="Center" MaxWidth="35"/>
-        <TextBox Name="SMSField" Grid.Column="1" Height="23" Margin="10,0" TextWrapping="Wrap" Text="Выбранное СМС сообщение" VerticalAlignment="Center" MouseDoubleClick="SMSField_MouseLeftButtonUp" VerticalContentAlignment="Center" Focusable="False"/>
-        <Button Name="SMSQuestion" Content="Задать вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" VerticalAlignment="Center" Padding="5,1" Style="{StaticResource RulledButtons}" />
-        <Button Name="SMSSpam" Content="Спамер" Grid.Column="1" HorizontalAlignment="Left" Margin="110,0,0,0" Grid.Row="1" VerticalAlignment="Center" Padding="5,1" Style="{StaticResource RulledButtons}" />
-        <Button Name="SMSIgnor" Content="Игнорировать" Grid.Column="1" HorizontalAlignment="Left" Margin="175,0,0,0" Grid.Row="1" VerticalAlignment="Center" Padding="5,1" Style="{StaticResource RulledButtons}" />
+        <TextBox Name="SMSField" Grid.Column="1" Height="20" Margin="10,7,30,7" TextWrapping="Wrap" Text="Выбранное СМС сообщение" VerticalAlignment="Center" MouseDoubleClick="SMSField_MouseLeftButtonUp" VerticalContentAlignment="Center" Focusable="False"/>
+        <Button Name="SMSQuestion" Content="Задать вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" VerticalAlignment="Center" Padding="5,1" Style="{StaticResource RulledButtons}" Click="SMSQuestion_Click" />
+        <Button Name="SMSSpam" Content="Спамер" Grid.Column="1" HorizontalAlignment="Left" Margin="110,0,0,0" Grid.Row="1" VerticalAlignment="Center" Padding="5,1" Style="{StaticResource RulledButtons}" Click="SMSSpam_Click" />
+        <Button Name="SMSIgnor" Content="Игнорировать" Grid.Column="1" HorizontalAlignment="Left" Margin="175,0,0,0" Grid.Row="1" VerticalAlignment="Center" Padding="5,1" Style="{StaticResource RulledButtons}" Click="SMSIgnor_Click" />
+        <Button Name="SMSListOpen" Content="&lt;&lt;" Grid.Column="1" HorizontalAlignment="Right" Margin="0,7,10,7" VerticalAlignment="Center" Click="SMSListOpen_Click"/>
     </Grid>
 </UserControl>

@@ -82,3 +82,9 @@ I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMSAnswerWindow.g.cs
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\Modules\SMS\SMSListWindow.g.cs
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\GeneratedInternalTypeHelper.g.cs
 I:\!Development!\SHARdSearch\CCsearch\obj\Debug\CCsearch.csprojResolveAssemblyReference.cache
+D:\Work\SHARd\CCsearch\obj\Debug\Modules\SMS\SMS.baml
+D:\Work\SHARd\CCsearch\obj\Debug\Modules\SMS\SMSAnswerWindow.baml
+D:\Work\SHARd\CCsearch\obj\Debug\Modules\SMS\SMSListWindow.baml
+D:\Work\SHARd\CCsearch\obj\Debug\Modules\SMS\SMS.g.cs
+D:\Work\SHARd\CCsearch\obj\Debug\Modules\SMS\SMSAnswerWindow.g.cs
+D:\Work\SHARd\CCsearch\obj\Debug\Modules\SMS\SMSListWindow.g.cs

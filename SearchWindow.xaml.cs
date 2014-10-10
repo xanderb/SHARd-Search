@@ -15,6 +15,7 @@ using System.Linq;
 using System.Data;
 using System.IO;
 using SHARd.Search.Modules.SMS;
+using System.Windows.Threading;
 
 
 namespace SHARd.Search
@@ -44,6 +45,7 @@ namespace SHARd.Search
         private int CPUCores;
         private int CPULogicalCores;
         private string CPUName;
+        private DispatcherTimer SMSTimer = new DispatcherTimer();
 
         #region Collections
         //ObservableCollection<MPNClass> mpns = new ObservableCollection<MPNClass>();
@@ -71,6 +73,8 @@ namespace SHARd.Search
         public Dictionary<int, ObservableCollection<FormaClass>> formas = new Dictionary<int, ObservableCollection<FormaClass>>();
         public Dictionary<int, ObservableCollection<MpClass>> mps = new Dictionary<int, ObservableCollection<MpClass>>();
         public ObservableCollection<SMSClass> sms_messages = new ObservableCollection<SMSClass>();
+
+        public SMSClass SMSSelected;
         DataSet CommonData = new DataSet("ch_d_1");
         DataTable MPN_DT; 
         #endregion
@@ -107,6 +111,11 @@ namespace SHARd.Search
                 FarmLoadingText.Visibility = Visibility.Hidden;
                 CityLoadingText.Visibility = Visibility.Hidden;
             }
+
+            SMSTimer.Tick += new EventHandler(SmsTimerCallback);
+            SMSTimer.Interval = new TimeSpan(0, 0, 3);
+            SMSTimer.Start();
+            sms_messages.CollectionChanged += SMSInterface.SMSCollectionChange;
         }
 
         void MPN_DT_RowChanged(object sender, DataRowChangeEventArgs e)
@@ -1426,7 +1435,48 @@ namespace SHARd.Search
             }
         }
         #endregion
+
+        #region SMS module
+        private void SMSLoad()
+        {
+            SqlConnection ch_d_1_dbc = new SqlConnection(Properties.Settings.Default.ch_d_1ConnectionString);
+            sms_messages.Clear();
+            string sql = "SELECT TOP 999 sms_message_text, sms_message_number, sms_message_date, id FROM sms_message WITH (NOLOCK) WHERE sms_message_type_flag = 0 AND sms_message_process_flag = 0 AND sms_message_lock = 0 AND sms_message_spam = 0 ORDER BY sms_message_date DESC";
+            SqlCommand sc = new SqlCommand(sql, ch_d_1_dbc);
+            ch_d_1_dbc.Open();
+            SqlDataReader data = sc.ExecuteReader();
+
+            try
+            {
+                while (data.Read())
+                {
+                    int id = Convert.ToInt32(data["id"].ToString());
+                    string text = data["sms_message_text"].ToString();
+                    string date = data["sms_message_date"].ToString();
+                    string number = data["sms_message_number"].ToString();
+                    SMSClass smsItem = new SMSClass(id, text, number, date);
+                    smsItem.Index = sms_messages.Count;
+                    sms_messages.Add(smsItem);
+                }
+            }
+            finally
+            {
+                data.Close();
+                ch_d_1_dbc.Close();
+            }
+        }
+        public void SmsTimerCallback(object sender, EventArgs args)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                SMSLoad();
+                SMSInterface.SMSCount.Text = sms_messages.Count.ToString();
+                //DebugText.Text += String.Format("\nОтработка таймера");
+            });
+        }
         
+        #endregion
+
         private void GenerateFormaSources(FormEventArgs e)
         {
             MPNClass mpn = (MPNClass)e.DataObject;
@@ -1600,6 +1650,11 @@ namespace SHARd.Search
                 DebugText.Text += String.Format("\r\nСимуляция выбора города по звонку. Успешно!");
             else
                 DebugText.Text += String.Format("\r\nСимуляция выбора города по звонку. Не удалось!");
+        }
+
+        private void SMSInterface_Loaded(object sender, RoutedEventArgs e)
+        {
+            SMSInterface.main = this;
         }
 
     }

@@ -116,6 +116,7 @@
             <Button x:Name="SimpleAnswerButton" Content="Ответ голосом" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="SimpleAnswerButton_Click" />
             <Button x:Name="AutoAnswerButton" Content="На автоответ" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="AutoAnswerButton_Click"/>
             <Button x:Name="AddInfoButton" Content="Доп. информация" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="AddInfoButton_Click"/>
+            <Button x:Name="SMSSend" Content="SMS" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="SMSSend_Click" />
         </Grid>
     </Grid>
 </UserControl>

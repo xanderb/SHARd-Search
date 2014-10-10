@@ -21,6 +21,7 @@ namespace SHARd.Search
             this.sms_message_text = sms_text;
             this.sms_message_number = sms_number;
             this.sms_message_date = sms_date;
+            this.selected = false;
         }
 
         public int GetID()
@@ -28,9 +29,14 @@ namespace SHARd.Search
             return this.id;
         }
 
-        public override string ToString()
+        public string GetText()
         {
             return this.sms_message_text;
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{1} {0}", this.sms_message_number, this.sms_message_text);
         }
 
         public string GetNumber()

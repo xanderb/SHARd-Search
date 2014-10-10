@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SHARd.Search.Modules.SMS;
 
 namespace SHARd.Search
 {
@@ -147,18 +148,21 @@ namespace SHARd.Search
 
         private void FilterSubmit_Click(object sender, RoutedEventArgs e)
         {
-            Main.finals.Clear();
-            string genericSql = Second.GenerateMpSqlTable();
-            string FilterSql = FilterTextParse();
-            if(FilterSql != "")
+            if (FilterText.Text != "")
             {
-                if (Second.GetFinalInfo(genericSql, 0, FilterSql))
+                Main.finals.Clear();
+                string genericSql = Second.GenerateMpSqlTable();
+                string FilterSql = FilterTextParse();
+                if (FilterSql != "")
                 {
-                    Main.FLog.Log(String.Format("Применен фильтр на финальной странице. Поиск по выбранному городу"));
-                }
-                else if (Second.GetFinalInfo(genericSql, 1, FilterSql))
-                {
-                    Main.FLog.Log(String.Format("Применен фильтр на финальной странице. Поиск по всем городам"));
+                    if (Second.GetFinalInfo(genericSql, 0, FilterSql))
+                    {
+                        Main.FLog.Log(String.Format("Применен фильтр на финальной странице. Поиск по выбранному городу"));
+                    }
+                    else if (Second.GetFinalInfo(genericSql, 1, FilterSql))
+                    {
+                        Main.FLog.Log(String.Format("Применен фильтр на финальной странице. Поиск по всем городам"));
+                    }
                 }
             }
         }
@@ -166,7 +170,8 @@ namespace SHARd.Search
         private void SortDist_Click(object sender, RoutedEventArgs e)
         {
             Second.Sort = new string[]
-            {           
+            {
+                "order_flag",
                 "find_key desc",
                 "ds_complex_priority asc",
                 "search_Count desc",
@@ -194,6 +199,7 @@ namespace SHARd.Search
         {
             Second.Sort = new string[]
             {
+                "order_flag",
                 "find_key desc",
                 "search_Count desc",
                 "ds_complex_priority asc",
@@ -223,6 +229,7 @@ namespace SHARd.Search
         {
             Second.Sort = new string[]
             {
+                "order_flag",
                 "ds_mp_presence_tsdate desc",
                 "find_key desc",
                 "search_Count desc",
@@ -246,6 +253,28 @@ namespace SHARd.Search
             {
                 Main.FLog.Log(String.Format("Сортировка по дате добавления на финальной странице. Поиск по всем городам"));
 
+            }
+        }
+
+        private void SMSSend_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> DrugstoreStrs = new List<string>();
+            foreach (DrugstoreInfo final in Main.finals)
+            {
+                if (final.Selected == true)
+                {
+                    if (DrugstoreStrs.IndexOf(final.DDStr) < 0)
+                    {
+                        DrugstoreStrs.Add(final.DDStr);
+                    }
+                    
+                }
+            }
+            string SMSTextToSend = String.Join(";;", DrugstoreStrs);
+            if (DrugstoreStrs.Count > 0 && SMSTextToSend != "")
+            {
+                SMSAnswerWindow answerWindow = new SMSAnswerWindow(Main, SMSTextToSend);
+                answerWindow.Show();
             }
         }
     }
