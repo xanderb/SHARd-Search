@@ -101,7 +101,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Grid Name="LoadingWrap" Visibility="Hidden">
+        <Grid Name="LoadingWrap" Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="1*"/>
@@ -121,7 +121,7 @@
             <TextBlock x:Name="CityLoadingText" HorizontalAlignment="Stretch" Margin="546,178,546,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="20" Width="100"/>
 
         </Grid>
-        <Grid x:Name="MainGrid" Style="{StaticResource cbStyle}" Width="Auto" Height="Auto" Visibility="Visible">
+        <Grid x:Name="MainGrid" Style="{StaticResource cbStyle}" Width="Auto" Height="Auto" Visibility="Hidden">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition Height="50"/>
